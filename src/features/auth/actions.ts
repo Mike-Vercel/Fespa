@@ -2,7 +2,9 @@
 
 import type { AuthError } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { WELCOME_SEEN_COOKIE } from "@/features/dashboard/welcome-cookie";
 import { getAuthConfirmUrl } from "@/server/auth/app-url";
 import { getSessionContext, homePathFor } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/supabase";
@@ -240,6 +242,8 @@ async function signOut(scope: "local" | "global"): Promise<never> {
   if (error) {
     logger.warn("auth.sign_out_failed", { errorCode: error.code, scope });
   }
+  // Al prossimo accesso la dashboard mostra di nuovo il benvenuto.
+  (await cookies()).delete(WELCOME_SEEN_COOKIE);
   revalidatePath("/", "layout");
   redirect(LOGIN_PATH);
 }

@@ -414,15 +414,21 @@ npm run email:templates -- --check # confronta Supabase con i file del progetto
 
 Supabase Auth tiene in memoria ogni template già usato per **10 minuti**: le email inviate subito dopo una modifica possono avere ancora la grafica precedente.
 
-In alternativa, da *Authentication → Emails* incolla a mano:
+In alternativa, da *Authentication → Emails* incolla a mano (gli oggetti sono in `scripts/supabase-email-templates.ts`):
 
-| Template Supabase | File | Oggetto consigliato |
+| Template Supabase | File | Oggetto |
 |---|---|---|
-| Confirm signup | `confirmation.html` | Conferma la tua email · FESPA |
-| Magic Link | `magic-link.html` | Il tuo link di accesso · FESPA |
-| Reset Password | `recovery.html` | Reimposta la password · FESPA |
+| Confirm signup | `confirmation.html` | Il tuo codice FESPA |
+| Magic Link | `magic-link.html` | Il tuo link di accesso a FESPA |
+| Reset Password | `recovery.html` | Reimposta la tua password FESPA |
+| Invite user | `invite.html` | Il tuo invito a FESPA |
+| Change email address | `email-change.html` | Conferma il tuo nuovo indirizzo email |
+| Reauthentication | `reauthentication.html` | Il tuo codice di verifica FESPA |
+| Notifiche di sicurezza (7) | `notifications/*.html` | password, email, telefono, metodi di accesso e di verifica cambiati |
 
-La conferma della registrazione contiene sia un **codice** (`{{ .Token }}`, 8 cifre come da *Email OTP Length*) sia un link: dopo la registrazione la pagina chiede il codice (su iPhone viene proposto sopra la tastiera, con reinvio dopo 60 secondi), mentre il link resta per chi apre l'email dal computer e per gli inviti delle coach. I link puntano a `{{ .SiteURL }}/auth/confirm?token_hash=…&type=…`: il token è verificato **sul server** (`verifyOtp`) e la sessione nasce nei cookie httpOnly. Per questo la Site URL deve essere l'indirizzo dell'app. Per usare un logo in immagine, pubblica un PNG (es. in `public/`) e sostituisci il monogramma con `<img src="{{ .SiteURL }}/logo-email.png" alt="FESPA" width="…">`.
+Le **notifiche di sicurezza** (es. "La tua password FESPA è stata cambiata") hanno già il loro template, ma partono solo se attivate in *Authentication → Emails → Security*.
+
+La conferma della registrazione contiene sia un **codice** (`{{ .Token }}`, 8 cifre come da *Email OTP Length*) sia un link: dopo la registrazione la pagina chiede il codice (su iPhone viene proposto sopra la tastiera, con reinvio dopo 60 secondi), mentre il link resta per chi apre l'email dal computer e per gli inviti delle coach. I link puntano a `{{ .SiteURL }}/auth/confirm?token_hash=…&type=…`: il token è verificato **sul server** (`verifyOtp`) e la sessione nasce nei cookie httpOnly. Per questo la Site URL deve essere l'indirizzo dell'app, che serve anche il logo delle email.
 
 **Invio delle email.** Il servizio email integrato di Supabase è pensato solo per le prove: consegna **solo agli indirizzi dei membri del team** del progetto e con un limite di pochi messaggi l'ora. Per invitare clienti reali configura un SMTP (es. Resend, Postmark, Brevo) in *Authentication → Emails → SMTP Settings* e alza i rate limit in *Authentication → Rate Limits*. Se l'invio fallisce, l'app mostra alla coach un link di registrazione da condividere a mano.
 

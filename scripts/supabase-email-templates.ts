@@ -23,6 +23,42 @@ const TEMPLATES = [
   { file: "invite.html", key: "invite", subject: "Il tuo invito a FESPA" },
   { file: "email-change.html", key: "email_change", subject: "Conferma il tuo nuovo indirizzo email" },
   { file: "reauthentication.html", key: "reauthentication", subject: "Il tuo codice di verifica FESPA" },
+  // Notifiche di sicurezza: si attivano a parte (mailer_notifications_*_enabled), qui si imposta solo il contenuto.
+  {
+    file: "notifications/password-changed.html",
+    key: "password_changed_notification",
+    subject: "La tua password FESPA è stata cambiata",
+  },
+  {
+    file: "notifications/email-changed.html",
+    key: "email_changed_notification",
+    subject: "L'email del tuo account FESPA è cambiata",
+  },
+  {
+    file: "notifications/phone-changed.html",
+    key: "phone_changed_notification",
+    subject: "Il numero di telefono del tuo account FESPA è cambiato",
+  },
+  {
+    file: "notifications/identity-linked.html",
+    key: "identity_linked_notification",
+    subject: "Nuovo metodo di accesso sul tuo account FESPA",
+  },
+  {
+    file: "notifications/identity-unlinked.html",
+    key: "identity_unlinked_notification",
+    subject: "Metodo di accesso rimosso dal tuo account FESPA",
+  },
+  {
+    file: "notifications/mfa-factor-enrolled.html",
+    key: "mfa_factor_enrolled_notification",
+    subject: "Nuovo metodo di verifica sul tuo account FESPA",
+  },
+  {
+    file: "notifications/mfa-factor-unenrolled.html",
+    key: "mfa_factor_unenrolled_notification",
+    subject: "Metodo di verifica rimosso dal tuo account FESPA",
+  },
 ] as const;
 
 function fail(message: string): never {
@@ -80,11 +116,12 @@ async function main(): Promise<void> {
 
   // Verifica: rilegge la configurazione e confronta con i file del progetto.
   const current = await managementRequest(configUrl, token);
+  const keyWidth = Math.max(...templates.map((template) => template.key.length)) + 2;
   for (const template of templates) {
     const subject = current[`mailer_subjects_${template.key}`];
     const content = current[`mailer_templates_${template.key}_content`];
     const isCurrent = subject === template.subject && content === template.content;
-    console.log(`  ${isCurrent ? "✓" : "✗"} ${template.key.padEnd(17)} ${isCurrent ? "aggiornato" : "diverso dal file del progetto"} — oggetto: ${String(subject ?? "(predefinito)")}`);
+    console.log(`  ${isCurrent ? "✓" : "✗"} ${template.key.padEnd(keyWidth)} ${isCurrent ? "aggiornato" : "diverso dal file del progetto"} — oggetto: ${String(subject ?? "(predefinito)")}`);
   }
 
   if (!checkOnly) {

@@ -128,48 +128,33 @@
     }
   }
 
-  @keyframes dashboard-welcome-in {
-    0% {
+  @keyframes dashboard-welcome-rise {
+    from {
       opacity: 0;
-      transform: translateY(18px) scale(0.92);
+      transform: translateY(22px);
     }
-    18%, 56% {
+    to {
       opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-    78% {
-      opacity: 0.9;
-      transform: translateY(-18vh) scale(0.8);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-42vh) scale(0.58);
+      transform: none;
     }
   }
 
-  @keyframes dashboard-welcome-halo {
-    0%, 100% {
+  @keyframes dashboard-welcome-glow {
+    from {
       opacity: 0;
-      transform: scale(0.7);
+      transform: scale(0.8);
     }
-    35%, 70% {
+    to {
       opacity: 1;
-      transform: scale(1);
+      transform: none;
     }
   }
 
-  @keyframes dashboard-welcome-spark {
-    0%, 100% {
+  /* Rete di sicurezza del benvenuto: se JavaScript non parte, sparisce da solo. */
+  @keyframes dashboard-welcome-failsafe {
+    to {
       opacity: 0;
-      transform: translateY(18px) scale(0.4);
-    }
-    35% {
-      opacity: 0.85;
-      transform: translateY(0) scale(1);
-    }
-    75% {
-      opacity: 0;
-      transform: translateY(-70px) scale(0.7);
+      visibility: hidden;
     }
   }
 
@@ -200,83 +185,73 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /*
+   * Benvenuto a tutto schermo (features/dashboard/dashboard-welcome.tsx): copre tutta l'app, sidebar compresa.
+   * Data e saluto hanno gli stessi caratteri dell'intestazione della dashboard, solo più grandi:
+   * così, rimpiccioliti in volo, combaciano con lei. Il volo lo calcola JavaScript.
+   */
   .dashboard-welcome {
     position: fixed;
     inset: 0;
-    z-index: 60;
+    z-index: 70;
     display: grid;
-    place-content: center;
+    place-items: center;
     overflow: hidden;
-    background: rgb(247 245 240 / 0.94);
     pointer-events: none;
-    animation: dashboard-welcome-in 1.9s var(--ease-soft) both;
+    animation: dashboard-welcome-failsafe 450ms ease-in 3s both;
   }
 
-  .dashboard-welcome__halo {
+  .dashboard-welcome__backdrop {
     position: absolute;
-    width: min(72vw, 620px);
-    aspect-ratio: 1;
+    inset: 0;
+    background-color: var(--color-paper);
+  }
+
+  .dashboard-welcome__backdrop::before {
+    content: "";
+    position: absolute;
+    inset: 12% 8%;
     border-radius: 999px;
-    background: radial-gradient(circle, rgb(230 236 226 / 0.9) 0%, rgb(225 238 240 / 0.42) 36%, transparent 70%);
-    filter: blur(10px);
-    animation: dashboard-welcome-halo 1.9s var(--ease-soft) both;
+    background: radial-gradient(closest-side, rgb(230 236 226 / 0.95), rgb(225 238 240 / 0.45) 55%, transparent);
+    filter: blur(24px);
+    animation: dashboard-welcome-glow 1.2s var(--ease-soft) both;
+  }
+
+  .dashboard-welcome__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0 1rem;
   }
 
   .dashboard-welcome__eyebrow,
   .dashboard-welcome__title {
-    position: relative;
-    text-align: center;
+    transform-origin: 0 0;
+    white-space: nowrap;
   }
 
   .dashboard-welcome__eyebrow {
-    margin-bottom: 0.75rem;
     color: var(--color-accent-strong);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
+    font-size: clamp(0.8125rem, 1.6vw, 1rem);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    animation: dashboard-welcome-rise 700ms var(--ease-soft) 80ms both;
   }
 
   .dashboard-welcome__title {
     color: var(--color-ink);
     font-family: var(--font-serif);
-    font-size: clamp(2.5rem, 7vw, 5.5rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    text-shadow: 0 10px 30px rgb(31 29 26 / 0.08);
+    font-size: clamp(2.25rem, 9vw, 6.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    animation: dashboard-welcome-rise 800ms var(--ease-soft) 160ms both;
   }
 
   .dashboard-welcome__title span {
     color: var(--color-accent-strong);
-  }
-
-  .dashboard-welcome__spark {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: var(--color-accent);
-    box-shadow: 0 0 18px 4px rgb(74 102 69 / 0.32);
-    animation: dashboard-welcome-spark 1.9s var(--ease-soft) both;
-  }
-
-  .dashboard-welcome__spark--one {
-    margin: -170px 0 0 -260px;
-  }
-
-  .dashboard-welcome__spark--two {
-    width: 5px;
-    height: 5px;
-    margin: -80px 0 0 310px;
-    animation-delay: 120ms;
-    background: var(--color-sky);
-  }
-
-  .dashboard-welcome__spark--three {
-    width: 4px;
-    height: 4px;
-    margin: 170px 0 0 210px;
-    animation-delay: 220ms;
-    background: var(--color-amber);
   }
 
   .dashboard-reveal {
@@ -600,5 +575,10 @@
   ::view-transition-group(*) {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
+  }
+
+  /* Il benvenuto a tutto schermo è solo movimento: non si mostra affatto. */
+  .dashboard-welcome {
+    display: none;
   }
 }
