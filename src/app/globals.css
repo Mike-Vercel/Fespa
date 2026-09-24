@@ -294,8 +294,8 @@
     display: grid;
     place-items: center;
     overflow: hidden;
-    background: #fff;
-    color: #1f1d1a;
+    background: #0b0b0b;
+    color: #fff;
     opacity: 1;
     transition: opacity 650ms var(--ease-soft), visibility 650ms var(--ease-soft);
   }
@@ -308,20 +308,131 @@
 
   .landing-intro__line {
     display: flex;
-    width: min(100% - 2rem, 1040px);
+    width: min(100% - 1rem, 1440px);
+    min-height: 100svh;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: clamp(0.6rem, 2vw, 1.25rem);
+    gap: clamp(1.35rem, 4vh, 3rem);
     overflow: hidden;
-    background: #fff;
+    background: #0b0b0b;
   }
 
-  .landing-intro__slash {
+  .landing-intro__wordmark {
+    position: relative;
+    top: -10vh;
     flex: 0 0 auto;
-    color: #1f1d1a;
-    font-family: var(--font-serif);
-    font-size: clamp(2.2rem, 6vw, 5.3rem);
-    line-height: 1;
+    color: #fff;
+    font-family: var(--font-schibsted), sans-serif;
+    font-size: clamp(2.8rem, 8vw, 7rem);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 0.9;
+    display: inline-flex;
+    gap: 0.02em;
+    /* La spaziatura aggiunge spazio anche dopo l'ultima lettera: lo si compensa per restare al centro. */
+    margin-right: -0.12em;
+  }
+
+  .landing-intro__letter {
+    display: inline-block;
+    will-change: opacity, transform, filter;
+    animation: landing-letter-form 720ms var(--ease-soft) var(--letter-delay) both;
+  }
+
+  .landing-intro__reel {
+    width: min(100%, 1180px);
+    min-width: 0;
+    justify-content: center;
+    will-change: opacity, transform, filter;
+    animation: landing-intro-appear 650ms var(--ease-soft) 760ms both;
+  }
+
+  /* Ogni frase centrata: la colonna è larga quanto la più lunga, le altre non devono restare a sinistra. */
+  .landing-intro__reel .username-reel__track > div {
+    text-align: center;
+    transition: color 500ms var(--ease-soft), opacity 500ms var(--ease-soft), text-shadow 500ms var(--ease-soft);
+  }
+
+  .landing-intro__reel .username-reel__content {
+    justify-content: center;
+  }
+
+  .landing-intro__reel .username-reel__viewport {
+    flex: 0 1 auto;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .landing-intro__reel .username-reel__track {
+    width: max-content;
+    margin-inline: auto;
+  }
+
+  @keyframes landing-intro-appear {
+    from {
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(16px) scale(0.88);
+    }
+    62% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(-2px) scale(1.015);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes landing-letter-form {
+    0% {
+      opacity: 0;
+      filter: blur(14px);
+      transform: translateY(24px) scale(0.7);
+    }
+    68% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(-4px) scale(1.06);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .landing-intro__reel {
+      width: 100%;
+    }
+
+    .landing-intro__line {
+      gap: 4.5rem;
+    }
+
+    .landing-intro__wordmark {
+      top: -8vh;
+    }
+
+    .landing-intro__reel .username-reel__content {
+      width: 100%;
+      font-size: clamp(0.72rem, 3.9vw, 1.25rem);
+      letter-spacing: -0.05em;
+    }
+
+    .landing-intro__reel .username-reel__viewport {
+      flex: 0 1 auto;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .landing-intro__reel .username-reel__track {
+      max-width: 100%;
+    }
   }
 
   .landing-content {

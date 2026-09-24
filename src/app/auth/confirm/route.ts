@@ -13,6 +13,8 @@ import { LOGIN_PATH } from "@/validation/redirect";
 
 const SUPPORTED_TYPES: readonly EmailOtpType[] = ["email", "signup", "invite", "magiclink", "recovery", "email_change"];
 const RESET_PASSWORD_PATH = "/reimposta-password";
+/** Il cambio email si chiede solo dal profilo dello staff: lì si mostra l'esito. */
+const PROFILE_PATH = "/profile";
 const MAX_TOKEN_LENGTH = 512;
 
 function parseOtpType(value: string | null): EmailOtpType | null {
@@ -49,6 +51,12 @@ export async function GET(request: NextRequest) {
   }
 
   const { data, error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+  // Cambio email con "Secure email change": il primo dei due link è valido ma non restituisce
+  // né utente né sessione. Manca ancora quello inviato all'altro indirizzo.
+  if (!error && !data.user && type === "email_change") {
+    logger.info("auth.email_change_first_link_confirmed");
+    return NextResponse.redirect(new URL(`${PROFILE_PATH}?email=primo-link`, request.url));
+  }
   if (error || !data.user) {
     logger.warn("auth.link_verification_failed", { type, errorCode: error?.code });
     return NextResponse.redirect(failureUrl);
@@ -57,6 +65,9 @@ export async function GET(request: NextRequest) {
   logger.info("auth.link_verified", { type, userId: data.user.id });
   if (type === "recovery") {
     return NextResponse.redirect(new URL(RESET_PASSWORD_PATH, request.url));
+  }
+  if (type === "email_change") {
+    return NextResponse.redirect(new URL(`${PROFILE_PATH}?email=aggiornata`, request.url));
   }
 
   return redirectHome(request, supabase, data.user.id);

@@ -5,7 +5,16 @@ import { cn } from "@/lib/cn";
 export function LogoMark({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex size-8 shrink-0 overflow-hidden rounded-md bg-white", className)} aria-hidden="true">
-      <Image src="/images/brand/logo-sidebar.webp" alt="" width={32} height={32} className="size-full object-cover" priority />
+      <Image
+        src="/images/brand/logo-sidebar.webp"
+        alt=""
+        width={256}
+        height={256}
+        quality={100}
+        sizes="(min-width: 1024px) 112px, 80px"
+        className="size-full object-cover"
+        priority
+      />
     </span>
   );
 }

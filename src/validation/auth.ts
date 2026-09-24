@@ -12,17 +12,20 @@ export const emailField = z
   .max(MAX_EMAIL_LENGTH, { error: "Email troppo lunga." })
   .pipe(z.email({ error: "Inserisci un indirizzo email valido." }));
 
-const newPasswordField = z
+export const newPasswordField = z
   .string({ error: "Scegli una password." })
   .min(MIN_NEW_PASSWORD_LENGTH, { error: `La password deve avere almeno ${MIN_NEW_PASSWORD_LENGTH} caratteri.` })
   .max(MAX_PASSWORD_LENGTH, { error: "Password troppo lunga." });
 
+/** Password già esistente (login, conferma prima di un cambio): nessuna regola di complessità. */
+export const existingPasswordField = z
+  .string({ error: "Inserisci la password." })
+  .min(1, { error: "Inserisci la password." })
+  .max(MAX_PASSWORD_LENGTH, { error: "Password troppo lunga." });
+
 export const loginSchema = z.object({
   email: emailField,
-  password: z
-    .string({ error: "Inserisci la password." })
-    .min(1, { error: "Inserisci la password." })
-    .max(MAX_PASSWORD_LENGTH, { error: "Password troppo lunga." }),
+  password: existingPasswordField,
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
