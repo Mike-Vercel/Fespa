@@ -8,7 +8,7 @@ import { getSessionContext, homePathFor } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/supabase";
 import { logger } from "@/server/logger";
 import type { FieldErrors } from "@/types/results";
-import { emailOnlySchema, loginSchema, newPasswordSchema, signUpSchema } from "@/validation/auth";
+import { emailOnlySchema, loginSchema, newPasswordSchema, signupCodeSchema, signUpSchema } from "@/validation/auth";
 import { fieldErrorsOf } from "@/validation/field-errors";
 import { LOGIN_PATH, postLoginPathFor } from "@/validation/redirect";
 
@@ -122,9 +122,62 @@ export async function signUpAction(_previous: AuthFormState, formData: FormData)
 
   logger.info("auth.sign_up_requested");
   // Supabase non rivela se l'email era già registrata: la risposta è sempre la stessa.
+  // Il form passa al passo del codice di conferma per questa email.
   return {
-    success: `Ti abbiamo inviato un'email a ${parsed.data.email}: apri il link per confermare l'indirizzo e completare la registrazione.`,
+    success: `Ti abbiamo inviato un codice di conferma a ${parsed.data.email}.`,
+    email: parsed.data.email,
   };
+}
+
+/**
+ * Conferma dell'email con il codice OTP ricevuto (alternativa al link nella stessa email).
+ * Se il codice è giusto Supabase crea la sessione e la persona prosegue nella sua area.
+ */
+export async function verifySignupCodeAction(_previous: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const parsed = signupCodeSchema.safeParse({ email: formData.get("email"), code: formData.get("code") ?? "" });
+  if (!parsed.success) {
+    return { fieldErrors: fieldErrorsOf(parsed.error) };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.verifyOtp({ email: parsed.data.email, token: parsed.data.code, type: "email" });
+  if (error || !data.user) {
+    logger.warn("auth.signup_code_failed", { errorCode: error?.code, status: error?.status });
+    const isRateLimited = error?.status === 429 || error?.code === "over_request_rate_limit";
+    return {
+      formError: isRateLimited
+        ? "Troppi tentativi in poco tempo. Attendi qualche minuto e riprova."
+        : "Codice non valido o scaduto. Controlla le cifre oppure richiedine uno nuovo.",
+    };
+  }
+
+  logger.info("auth.signup_code_verified", { userId: data.user.id });
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+  revalidatePath("/", "layout");
+  redirect(homePathFor(profile?.role ?? "client"));
+}
+
+export type ResendResult = { ok: boolean; message: string };
+
+/** Nuovo codice (e nuovo link) di conferma per un'email registrata ma non ancora confermata. */
+export async function resendSignupCodeAction(email: string): Promise<ResendResult> {
+  const parsed = emailOnlySchema.safeParse({ email });
+  if (!parsed.success) {
+    return { ok: false, message: "Email non valida: torna indietro e correggila." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: parsed.data.email,
+    options: { emailRedirectTo: await getAuthConfirmUrl() },
+  });
+  if (error) {
+    logger.warn("auth.signup_code_resend_failed", { errorCode: error.code, status: error.status });
+    return { ok: false, message: authErrorMessage(error) };
+  }
+  logger.info("auth.signup_code_resent");
+  return { ok: true, message: "Nuovo codice inviato: controlla anche lo spam. Il codice precedente non vale più." };
 }
 
 // --- Password ----------------------------------------------------------------------

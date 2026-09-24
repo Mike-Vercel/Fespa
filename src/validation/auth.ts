@@ -45,3 +45,23 @@ export const newPasswordSchema = z
     path: ["confirmPassword"],
     error: "Le due password non coincidono.",
   });
+
+/**
+ * Codice OTP inviato via email da Supabase. OTP_LENGTH deve coincidere con
+ * Authentication → Sign In / Providers → Email → "Email OTP Length" (in questo progetto: 8).
+ * La validazione accetta comunque da 6 a 10 cifre, così un cambio in Supabase non blocca nessuno.
+ * Chi lo incolla può portarsi dietro spazi: si tolgono prima del controllo.
+ */
+export const OTP_LENGTH = 8;
+const OTP_MIN_LENGTH = 6;
+const OTP_MAX_LENGTH = 10;
+// String.raw: in un template normale "\d" perderebbe la barra e diventerebbe la lettera "d".
+const OTP_PATTERN = new RegExp(String.raw`^\d{${OTP_MIN_LENGTH},${OTP_MAX_LENGTH}}$`);
+
+export const signupCodeSchema = z.object({
+  email: emailField,
+  code: z
+    .string({ error: "Inserisci il codice che ti abbiamo inviato." })
+    .transform((value) => value.replace(/\s+/g, ""))
+    .pipe(z.string().regex(OTP_PATTERN, { error: `Il codice è di ${OTP_LENGTH} cifre: controlla e riprova.` })),
+});

@@ -1,21 +1,24 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { describedBy, Field, Input } from "@/components/ui/form-fields";
 import { MIN_NEW_PASSWORD_LENGTH } from "@/validation/auth";
 import { signUpAction, type AuthFormState } from "./actions";
-import { AuthFormError, AuthSuccess } from "./auth-shell";
+import { AuthFormError } from "./auth-shell";
 import { PasswordInput } from "./password-input";
+import { SignupCodeStep } from "./signup-code-step";
 
 const INITIAL_STATE: AuthFormState = {};
 
 export function SignUpForm({ defaultEmail }: { defaultEmail: string }) {
   const [state, formAction, isPending] = useActionState(signUpAction, INITIAL_STATE);
+  // Esito da cui si è tornati indietro ("hai sbagliato email?"): il form riappare con l'email da correggere.
+  const [dismissedState, setDismissedState] = useState<AuthFormState | null>(null);
   const errors = state.fieldErrors ?? {};
 
-  if (state.success) {
-    return <AuthSuccess message={state.success} />;
+  if (state.success && state.email && state !== dismissedState) {
+    return <SignupCodeStep email={state.email} onChangeEmail={() => setDismissedState(state)} />;
   }
 
   return (
@@ -58,7 +61,7 @@ export function SignUpForm({ defaultEmail }: { defaultEmail: string }) {
         {isPending ? "Registrazione in corso…" : "Crea l'account"}
       </Button>
       <p className="text-xs text-ink-3">
-        Dopo la conferma dell&apos;email completerai i tuoi dati. Se ti ha invitato una coach, usa la stessa email
+        Ti invieremo un codice per confermare l&apos;email, poi completerai i tuoi dati. Se ti ha invitato una coach, usa la stessa email
         dell&apos;invito: il tuo account verrà collegato automaticamente.
       </p>
     </form>
