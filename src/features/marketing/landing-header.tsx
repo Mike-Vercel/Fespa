@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogoMark, Wordmark } from "@/components/brand/logo";
+import Image from "next/image";
 import { buttonClasses } from "@/components/ui/button";
 import { LANDING_SECTIONS, LOGIN_PATH, SIGNUP_PATH } from "./content";
 import { Container } from "./primitives";
@@ -7,11 +7,10 @@ import { Container } from "./primitives";
 /** Barra superiore fissa: la CTA di registrazione resta sempre a portata di mano. */
 export function LandingHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-line/80 bg-paper/90 backdrop-blur-md">
+    <header className="landing-header sticky top-0 z-30 border-b border-line/70 bg-white/85 backdrop-blur-xl">
       <Container className="flex h-16 items-center justify-between gap-3">
-        <Link href="/" className="flex min-w-0 items-center gap-2.5 rounded-md py-1" aria-label="Metodo FESPA, torna all'inizio">
-          <LogoMark />
-          <Wordmark subtitle="Metodo®" />
+        <Link href="/" className="flex min-w-0 items-center rounded-md py-1" aria-label="FESPA Coach AI, torna all'inizio">
+          <Image src="/images/brand/logo-homepage.webp" alt="FESPA Coach AI" width={92} height={46} className="h-11 w-[88px] object-contain" priority />
         </Link>
 
         <nav aria-label="Sezioni della pagina" className="hidden lg:block">
@@ -20,7 +19,7 @@ export function LandingHeader() {
               <li key={section.id}>
                 <a
                   href={`#${section.id}`}
-                  className="rounded-md px-3 py-2 text-sm text-ink-2 transition-colors duration-150 hover:bg-hover hover:text-ink"
+                  className="landing-nav-link rounded-md px-3 py-2 text-[13px] font-medium text-ink-2 transition-colors duration-200 hover:text-ink"
                 >
                   {section.label}
                 </a>
@@ -30,11 +29,11 @@ export function LandingHeader() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <Link href={LOGIN_PATH} className={buttonClasses("ghost", "md", "px-3")}>
+          <Link href={LOGIN_PATH} className={buttonClasses("ghost", "md", "px-3 text-[13px]")}>
             Accedi
           </Link>
-          <Link href={SIGNUP_PATH} className={buttonClasses("primary", "md")}>
-            Inizia gratis
+          <Link href={SIGNUP_PATH} className={buttonClasses("primary", "md", "rounded-full px-5 text-[13px] shadow-[0_8px_20px_-12px_rgb(31_29_26/0.7)]")}>
+            Inizia
           </Link>
         </div>
       </Container>

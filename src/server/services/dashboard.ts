@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { buildAttentionList, CHECKIN_REVIEW_LATE_AFTER_HOURS, type AttentionItem } from "@/domain/attention";
 import { addDays, calendarDateIn, hourIn } from "@/domain/dates";
-import { groupPendingFollowups, type PendingFollowupGroups } from "@/domain/followups";
+import { DASHBOARD_UPCOMING_DAYS, groupPendingFollowups, type PendingFollowupGroups } from "@/domain/followups";
 import { firstNameOf, greetingForHour } from "@/domain/greeting";
 import { isAdminRole } from "@/domain/roles";
 import type { AuthenticatedContext } from "@/server/auth/session";
@@ -14,8 +14,6 @@ import { countDueFollowups, listPendingFollowupsDueBy } from "@/server/repositor
 import type { CheckinWithClient, ClientStatus } from "@/types/domain";
 
 const RECENT_CHECKINS_LIMIT = 6;
-/** "Prossimi follow-up" mostra la settimana successiva, oltre a scaduti e di oggi. */
-const UPCOMING_FOLLOWUP_DAYS = 7;
 const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
 
 const ACTIVE_STATUSES: ReadonlySet<ClientStatus> = new Set(["active", "onboarding"]);
@@ -54,7 +52,7 @@ export async function getDashboard(context: AuthenticatedContext, now = new Date
     listRecentCheckins(context.db, { limit: RECENT_CHECKINS_LIMIT }),
     countPendingReview(context.db),
     countPendingReview(context.db, lateReviewThreshold),
-    listPendingFollowupsDueBy(context.db, addDays(today, UPCOMING_FOLLOWUP_DAYS)),
+    listPendingFollowupsDueBy(context.db, addDays(today, DASHBOARD_UPCOMING_DAYS)),
   ]);
 
   const attention = buildAttentionList(clients, { now, timezone });

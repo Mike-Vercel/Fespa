@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dueBucketOf, groupPendingFollowups } from "@/domain/followups";
+import { cappedCountLabel, dueBucketOf, groupPendingFollowups } from "@/domain/followups";
 import type { FollowupItem } from "@/types/domain";
 
 const TODAY = "2026-09-24";
@@ -45,5 +45,14 @@ describe("groupPendingFollowups", () => {
     expect(groups.overdue.map((item) => item.id)).toEqual(["old"]);
     expect(groups.today.map((item) => item.id)).toEqual(["today"]);
     expect(groups.upcoming.map((item) => item.id)).toEqual(["sooner", "later"]);
+  });
+});
+
+describe("cappedCountLabel (conteggio dei gruppi in dashboard)", () => {
+  it("mostra il numero esatto fino al massimo, poi \"3+\"", () => {
+    expect(cappedCountLabel(1, 3)).toBe("1");
+    expect(cappedCountLabel(3, 3)).toBe("3");
+    expect(cappedCountLabel(4, 3)).toBe("3+");
+    expect(cappedCountLabel(12, 3)).toBe("3+");
   });
 });

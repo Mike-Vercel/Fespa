@@ -1,66 +1,43 @@
-import { ArrowRight, BadgeCheck } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { HomePreview, ReplyToast } from "./app-previews";
 import { PRESS_MENTIONS, PROOF_STATS, SIGNUP_PATH } from "./content";
 import { Container, CTA_PRIMARY, CTA_SECONDARY } from "./primitives";
 
 export function HeroSection() {
   return (
-    <section aria-labelledby="hero-title" className="relative overflow-hidden">
-      {/* Alone decorativo dietro l'anteprima: statico, nessuna animazione continua. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-40 -top-40 size-[640px] rounded-full bg-[radial-gradient(circle,var(--color-accent-soft)_0%,transparent_65%)]"
-      />
+    <section aria-labelledby="hero-title" className="relative overflow-hidden border-b border-line bg-white">
+      <Container className="relative flex min-h-[calc(100svh-4.5rem)] flex-col items-center justify-center px-4 pb-16 pt-20 text-center sm:px-6 lg:pb-20 lg:pt-24">
+        <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.24em] text-accent-strong">Il metodo per tornare a sentirti bene</p>
 
-      <Container className="relative grid grid-cols-1 items-center gap-14 pb-16 pt-12 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:pb-24 lg:pt-20">
-        <div className="animate-rise-in">
-          <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-ink-2">
-            <BadgeCheck aria-hidden="true" className="size-4 text-accent" strokeWidth={1.75} />
-            Online coaching per donne · marchio registrato
-          </p>
+        <h1 id="hero-title" className="mt-5 max-w-5xl font-serif text-[clamp(2.4rem,6.5vw,6.8rem)] leading-[0.96] tracking-[-0.04em] text-ink text-balance">
+          Il tuo percorso <em className="text-accent-strong">comincia da te.</em>
+        </h1>
 
-          <h1
-            id="hero-title"
-            className="mt-6 font-serif text-[42px] leading-[1.04] tracking-[-0.02em] text-ink text-balance sm:text-[58px] lg:text-[66px]"
-          >
-            Rimodella il tuo corpo, <em className="text-accent-strong">senza diete restrittive.</em>
-          </h1>
+        <p className="hero-copy-reveal mt-8 max-w-xl text-[17px] leading-relaxed text-ink-2 text-pretty sm:text-[19px]">
+          Dimagrire senza ricominciare ogni lunedì. Impara a costruire abitudini sostenibili, con una coach che ti ascolta e ti accompagna davvero.
+        </p>
 
-          <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-ink-2 text-pretty">
-            Senza eliminare i carboidrati e senza ore di palestra: un percorso di ri-educazione alimentare e
-            consapevolezza, con una coach che ti segue passo dopo passo.
-          </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href={SIGNUP_PATH} className={CTA_PRIMARY}>
-              Inizia con la consulenza gratuita
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-            <a href="#come-funziona" className={CTA_SECONDARY}>
-              Come funziona
-            </a>
-          </div>
-          <p className="mt-3 text-[13px] text-ink-3">Registrazione gratuita e senza impegno.</p>
-
-          <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-line pt-6">
-            {PROOF_STATS.map((stat) => (
-              // column-reverse: il valore sopra l'etichetta, ma nel DOM <dt> resta prima di <dd>.
-              <div key={stat.label} className="flex flex-col-reverse justify-end gap-1">
-                <dt className="text-[13px] leading-snug text-ink-3">{stat.label}</dt>
-                <dd className="tabular font-serif text-[28px] leading-none text-ink sm:text-[34px]">{stat.value}</dd>
-              </div>
-            ))}
-          </dl>
+        <div className="hero-copy-reveal mt-8 flex flex-col items-center gap-3 sm:flex-row">
+          <Link href={SIGNUP_PATH} className={CTA_PRIMARY}>
+            Inizia dalla consulenza gratuita
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </Link>
+          <a href="#come-funziona" className={CTA_SECONDARY}>Scopri il metodo</a>
         </div>
 
-        <div className="flex justify-center lg:justify-end">
-          {/* La notifica è ancorata al telefono, non alla colonna: resta vicina a ogni larghezza. */}
-          <div className="relative">
-            <HomePreview className="rotate-[1.5deg]" />
-            <ReplyToast className="absolute -left-40 top-16 hidden md:flex" />
-          </div>
-        </div>
+        <dl className="hero-stats-reveal mt-14 grid w-full max-w-2xl grid-cols-3 border-y border-line py-5">
+          {PROOF_STATS.map((stat) => (
+            <div key={stat.label} className="flex flex-col gap-1 border-r border-line px-3 last:border-r-0">
+              <dd className="tabular font-serif text-2xl leading-none text-ink sm:text-3xl">{stat.value}</dd>
+              <dt className="text-[11px] leading-snug text-ink-3 sm:text-xs">{stat.label}</dt>
+            </div>
+          ))}
+        </dl>
+
+        <a href="#metodo" aria-label="Scorri per scoprire il metodo" className="hero-scroll-cue mt-10 inline-flex flex-col items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-3 hover:text-ink">
+          Scopri
+          <ArrowDown aria-hidden="true" className="size-4" />
+        </a>
       </Container>
     </section>
   );

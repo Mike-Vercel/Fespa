@@ -53,6 +53,8 @@ export const newPasswordSchema = z
  * Chi lo incolla può portarsi dietro spazi: si tolgono prima del controllo.
  */
 export const OTP_LENGTH = 8;
+/** Uguale all'intervallo minimo tra due email allo stesso utente impostato in Supabase (SMTP Settings). */
+export const RESEND_COOLDOWN_SECONDS = 60;
 const OTP_MIN_LENGTH = 6;
 const OTP_MAX_LENGTH = 10;
 // String.raw: in un template normale "\d" perderebbe la barra e diventerebbe la lettera "d".

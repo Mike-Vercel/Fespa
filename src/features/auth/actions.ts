@@ -6,11 +6,19 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { WELCOME_SEEN_COOKIE } from "@/features/dashboard/welcome-cookie";
 import { getAuthConfirmUrl } from "@/server/auth/app-url";
+import { secondsUntilNextEmail } from "@/server/auth/email-rate-limit";
 import { getSessionContext, homePathFor } from "@/server/auth/session";
-import { createSupabaseServerClient } from "@/server/db/supabase";
+import { createSupabaseServerClient, type AppSupabaseClient } from "@/server/db/supabase";
 import { logger } from "@/server/logger";
 import type { FieldErrors } from "@/types/results";
-import { emailOnlySchema, loginSchema, newPasswordSchema, signupCodeSchema, signUpSchema } from "@/validation/auth";
+import {
+  emailOnlySchema,
+  loginSchema,
+  newPasswordSchema,
+  RESEND_COOLDOWN_SECONDS,
+  signupCodeSchema,
+  signUpSchema,
+} from "@/validation/auth";
 import { fieldErrorsOf } from "@/validation/field-errors";
 import { LOGIN_PATH, postLoginPathFor } from "@/validation/redirect";
 
@@ -21,6 +29,8 @@ export type AuthFormState = {
   success?: string;
   /** Reinserita nel form dopo un errore, per non farla riscrivere. Mai la password. */
   email?: string;
+  /** Account registrato ma email non confermata: il form passa al codice di conferma. */
+  confirmation?: { resendAfterSeconds: number };
 };
 
 function readString(formData: FormData, key: string): string | undefined {
@@ -30,6 +40,10 @@ function readString(formData: FormData, key: string): string | undefined {
 
 /** Messaggi volutamente generici: non rivelano se l'email esiste. */
 function authErrorMessage(error: AuthError): string {
+  const waitSeconds = secondsUntilNextEmail(error);
+  if (waitSeconds !== null) {
+    return `Ti abbiamo appena inviato un'email: aspetta ${waitSeconds} secondi prima di richiederne un'altra.`;
+  }
   // Limite del servizio email (non dell'utente): con l'SMTP integrato Supabase invia poche email l'ora.
   if (error.code === "over_email_send_rate_limit") {
     return "In questo momento non riusciamo a inviare l'email di conferma: il servizio email ha raggiunto il limite di invii. Riprova tra un po'.";
@@ -39,9 +53,6 @@ function authErrorMessage(error: AuthError): string {
   }
   if (error.code === "invalid_credentials") {
     return "Email o password non corretti.";
-  }
-  if (error.code === "email_not_confirmed") {
-    return "Devi prima confermare la tua email: trovi il link nel messaggio che ti abbiamo inviato.";
   }
   if (error.code === "weak_password") {
     return "La password è troppo debole: usane una più lunga, con lettere e numeri.";
@@ -66,6 +77,9 @@ export async function signInAction(_previous: AuthFormState, formData: FormData)
   if (error) {
     // Nei log: solo codice e status, mai l'email o la password tentate.
     logger.warn("auth.sign_in_failed", { errorCode: error.code, status: error.status });
+    if (error.code === "email_not_confirmed") {
+      return sendConfirmationCodeOnSignIn(supabase, parsed.data.email);
+    }
     return { formError: authErrorMessage(error), email: parsed.data.email };
   }
 
@@ -73,6 +87,45 @@ export async function signInAction(_previous: AuthFormState, formData: FormData)
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
   logger.info("auth.sign_in_succeeded", { userId: data.user.id, role: profile?.role });
   redirect(postLoginPathFor(profile?.role ?? "client", readString(formData, "next")));
+}
+
+/**
+ * Account registrato ma email mai confermata (es. registrazione lasciata a metà): invece di bloccare
+ * l'accesso parte subito un nuovo codice e il form passa al passo del codice.
+ * Supabase risponde "email non confermata" solo DOPO aver verificato la password:
+ * il codice può farlo partire solo chi la conosce, non chiunque scriva un'email altrui.
+ */
+async function sendConfirmationCodeOnSignIn(supabase: AppSupabaseClient, email: string): Promise<AuthFormState> {
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo: await getAuthConfirmUrl() },
+  });
+  if (!error) {
+    logger.info("auth.sign_in_confirmation_code_sent");
+    return {
+      email,
+      confirmation: { resendAfterSeconds: RESEND_COOLDOWN_SECONDS },
+      success: `La tua email non è ancora confermata: per confermarla ti abbiamo appena inviato un codice a ${email}.`,
+    };
+  }
+
+  logger.warn("auth.sign_in_confirmation_code_failed", { errorCode: error.code, status: error.status });
+  const waitSeconds = secondsUntilNextEmail(error);
+  if (waitSeconds !== null) {
+    // Un codice è partito meno di un minuto fa ed è ancora valido: si usa quello.
+    return {
+      email,
+      confirmation: { resendAfterSeconds: waitSeconds },
+      success: `La tua email non è ancora confermata: ti abbiamo inviato da pochissimo un codice a ${email}, inseriscilo qui sotto.`,
+    };
+  }
+  return {
+    email,
+    confirmation: { resendAfterSeconds: 0 },
+    formError:
+      "La tua email non è ancora confermata, ma in questo momento non riusciamo a inviarti il codice. Se ne hai ricevuto uno da poco inseriscilo qui sotto, altrimenti richiedilo tra qualche minuto.",
+  };
 }
 
 /** Accesso senza password: link monouso via email (solo per account esistenti). */
@@ -156,7 +209,8 @@ export async function verifySignupCodeAction(_previous: AuthFormState, formData:
   logger.info("auth.signup_code_verified", { userId: data.user.id });
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
   revalidatePath("/", "layout");
-  redirect(homePathFor(profile?.role ?? "client"));
+  // Dal login arriva anche la pagina richiesta in origine (`next`); dalla registrazione no.
+  redirect(postLoginPathFor(profile?.role ?? "client", readString(formData, "next")));
 }
 
 export type ResendResult = { ok: boolean; message: string };

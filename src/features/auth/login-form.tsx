@@ -6,6 +6,7 @@ import { describedBy, Field, Input } from "@/components/ui/form-fields";
 import { requestLoginLinkAction, signInAction, type AuthFormState } from "./actions";
 import { AuthFormError, AuthSuccess } from "./auth-shell";
 import { PasswordInput } from "./password-input";
+import { SignupCodeStep } from "./signup-code-step";
 
 const INITIAL_STATE: AuthFormState = {};
 
@@ -20,13 +21,31 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
 
 function PasswordLoginForm({ nextPath, onUseLink }: { nextPath: string; onUseLink: () => void }) {
   const [state, formAction, isPending] = useActionState(signInAction, INITIAL_STATE);
+  // Esito da cui si è tornati indietro ("torna all'accesso"): il form riappare con l'email già scritta.
+  const [dismissedState, setDismissedState] = useState<AuthFormState | null>(null);
+  const isDismissed = state === dismissedState;
   const emailErrors = state.fieldErrors?.email;
   const passwordErrors = state.fieldErrors?.password;
+
+  // Registrazione lasciata a metà: il codice di conferma è appena partito, si inserisce qui.
+  if (state.confirmation && state.email && !isDismissed) {
+    return (
+      <SignupCodeStep
+        email={state.email}
+        notice={
+          state.formError ? { tone: "error", message: state.formError } : { tone: "success", message: state.success ?? "" }
+        }
+        resendAfterSeconds={state.confirmation.resendAfterSeconds}
+        nextPath={nextPath}
+        back={{ label: "Torna all'accesso", onClick: () => setDismissedState(state) }}
+      />
+    );
+  }
 
   return (
     <form action={formAction} noValidate className="flex flex-col gap-5">
       <input type="hidden" name="next" value={nextPath} />
-      {state.formError ? <AuthFormError message={state.formError} /> : null}
+      {state.formError && !isDismissed ? <AuthFormError message={state.formError} /> : null}
 
       <Field id="email" label="Email" errors={emailErrors}>
         <Input

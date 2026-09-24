@@ -283,6 +283,139 @@
     scroll-behavior: smooth;
   }
 
+  .landing-header {
+    transition: background-color 220ms ease, box-shadow 220ms ease;
+  }
+
+  .landing-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #fff;
+    color: #1f1d1a;
+    opacity: 1;
+    transition: opacity 650ms var(--ease-soft), visibility 650ms var(--ease-soft);
+  }
+
+  .landing-intro--exit {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .landing-intro__line {
+    display: flex;
+    width: min(100% - 2rem, 1040px);
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.6rem, 2vw, 1.25rem);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .landing-intro__slash {
+    flex: 0 0 auto;
+    color: #1f1d1a;
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 6vw, 5.3rem);
+    line-height: 1;
+  }
+
+  .landing-content {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 700ms var(--ease-soft), transform 700ms var(--ease-soft);
+  }
+
+  .landing-content--ready {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .landing-header:hover {
+    box-shadow: 0 10px 30px -24px rgb(31 29 26 / 0.45);
+  }
+
+  .landing-nav-link {
+    position: relative;
+  }
+
+  .landing-nav-link::after {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.25rem;
+    left: 0.75rem;
+    height: 1px;
+    background-color: var(--color-accent);
+    content: "";
+    opacity: 0;
+    transform: scaleX(0.2);
+    transform-origin: center;
+    transition: opacity 220ms ease, transform 220ms var(--ease-soft);
+  }
+
+  .landing-nav-link:hover::after,
+  .landing-nav-link:focus-visible::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  @keyframes hero-mark-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes hero-reel-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hero-scroll-cue {
+    0%, 100% {
+      opacity: 0.5;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(5px);
+    }
+  }
+
+  .hero-mark-reveal {
+    animation: hero-mark-reveal 700ms var(--ease-soft) both;
+  }
+
+  .hero-reel-reveal {
+    animation: hero-reel-reveal 800ms var(--ease-soft) 240ms both;
+  }
+
+  .hero-copy-reveal {
+    animation: hero-reel-reveal 700ms var(--ease-soft) 420ms both;
+  }
+
+  .hero-stats-reveal {
+    animation: hero-reel-reveal 700ms var(--ease-soft) 560ms both;
+  }
+
+  .hero-scroll-cue {
+    animation: hero-scroll-cue 1800ms ease-in-out 1200ms infinite;
+  }
+
   ::selection {
     background-color: var(--color-accent-soft);
     color: var(--color-ink);

@@ -3,6 +3,7 @@ import { AppSection } from "@/features/marketing/app-section";
 import { ClosingCta, FaqSection, LandingFooter } from "@/features/marketing/closing-sections";
 import { HeroSection, PressStrip } from "@/features/marketing/hero-section";
 import { JourneySection } from "@/features/marketing/journey-section";
+import { LandingIntro } from "@/features/marketing/landing-intro";
 import { LandingHeader } from "@/features/marketing/landing-header";
 import { MethodSection } from "@/features/marketing/method-section";
 import { TeamSection, TestimonialsSection } from "@/features/marketing/people-sections";
@@ -22,7 +23,8 @@ export const metadata: Metadata = {
  */
 export default function HomePage() {
   return (
-    <div className="landing-page">
+    <LandingIntro>
+      <div className="landing-page">
       <a
         href="#contenuto"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-on-ink"
@@ -42,6 +44,7 @@ export default function HomePage() {
         <ClosingCta />
       </main>
       <LandingFooter />
-    </div>
+      </div>
+    </LandingIntro>
   );
 }

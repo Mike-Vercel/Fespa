@@ -3,29 +3,43 @@
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { describedBy, Field, Input } from "@/components/ui/form-fields";
-import { OTP_LENGTH } from "@/validation/auth";
+import { OTP_LENGTH, RESEND_COOLDOWN_SECONDS } from "@/validation/auth";
 import { resendSignupCodeAction, verifySignupCodeAction, type AuthFormState, type ResendResult } from "./actions";
 import { AuthFormError, AuthSuccess } from "./auth-shell";
 
-/** Uguale all'intervallo minimo tra due email allo stesso utente impostato in Supabase (SMTP Settings). */
-const RESEND_COOLDOWN_SECONDS = 60;
 const INITIAL_STATE: AuthFormState = {};
 
 type SignupCodeStepProps = {
   email: string;
-  /** Torna al form di registrazione (es. email scritta male). */
-  onChangeEmail: () => void;
+  /** Messaggio in cima: perché serve il codice (o perché l'invio non è riuscito). */
+  notice?: { tone: "success" | "error"; message: string };
+  /** Secondi prima di poter chiedere un nuovo codice. */
+  resendAfterSeconds?: number;
+  /** Pagina richiesta prima del login: dopo la conferma si va lì (se è dell'area giusta). */
+  nextPath?: string;
+  /** Torna al form di partenza (es. email scritta male). */
+  back: { label: string; onClick: () => void };
 };
 
 /**
- * Secondo passo della registrazione: il codice di conferma ricevuto via email.
+ * Conferma dell'email con il codice ricevuto: dopo la registrazione, oppure al login
+ * di chi si era registrato senza confermare.
  * autocomplete="one-time-code" permette a iPhone (e alle tastiere che lo supportano) di proporre
  * il codice appena arriva; all'ultima cifra il form parte da solo.
  */
-export function SignupCodeStep({ email, onChangeEmail }: SignupCodeStepProps) {
+export function SignupCodeStep({
+  email,
+  notice = {
+    tone: "success",
+    message: `Ti abbiamo inviato un codice di conferma a ${email}. Inseriscilo qui sotto: vale per poco tempo.`,
+  },
+  resendAfterSeconds = RESEND_COOLDOWN_SECONDS,
+  nextPath,
+  back,
+}: SignupCodeStepProps) {
   const [state, formAction, isVerifying] = useActionState(verifySignupCodeAction, INITIAL_STATE);
   const [code, setCode] = useState("");
-  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+  const [cooldown, setCooldown] = useState(resendAfterSeconds);
   const [resendResult, setResendResult] = useState<ResendResult | null>(null);
   const [isResending, startResend] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
@@ -60,11 +74,12 @@ export function SignupCodeStep({ email, onChangeEmail }: SignupCodeStepProps) {
 
   return (
     <div className="flex flex-col gap-5">
-      <AuthSuccess message={`Ti abbiamo inviato un codice di conferma a ${email}. Inseriscilo qui sotto: vale per poco tempo.`} />
+      {notice.tone === "success" ? <AuthSuccess message={notice.message} /> : <AuthFormError message={notice.message} />}
 
       <form ref={formRef} action={formAction} noValidate className="flex flex-col gap-4">
         {state.formError ? <AuthFormError message={state.formError} /> : null}
         <input type="hidden" name="email" value={email} />
+        {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
         <Field id="signup-code" label="Codice di conferma" errors={errors.code}>
           <Input
             id="signup-code"
@@ -103,8 +118,8 @@ export function SignupCodeStep({ email, onChangeEmail }: SignupCodeStepProps) {
             {resendResult.message}
           </p>
         ) : null}
-        <button type="button" onClick={onChangeEmail} className="font-medium text-ink-2 underline-offset-4 hover:text-ink hover:underline">
-          Hai sbagliato email? Modificala
+        <button type="button" onClick={back.onClick} className="font-medium text-ink-2 underline-offset-4 hover:text-ink hover:underline">
+          {back.label}
         </button>
       </div>
     </div>

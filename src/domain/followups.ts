@@ -12,6 +12,18 @@ export function dueBucketOf(dueOn: string, today: string): DueBucket {
 
 export type PendingFollowupGroups = Record<DueBucket, FollowupItem[]>;
 
+/**
+ * Riquadro "Prossimi follow-up" della dashboard: oltre a scaduti e di oggi, solo i prossimi giorni
+ * e al massimo pochi per gruppo, così resta compatto. La lista completa è nella pagina Follow-up.
+ */
+export const DASHBOARD_UPCOMING_DAYS = 3;
+export const DASHBOARD_FOLLOWUPS_PER_GROUP = 3;
+
+/** Conteggio di un gruppo mostrato solo in parte: oltre il massimo diventa "3+". */
+export function cappedCountLabel(count: number, max: number): string {
+  return count > max ? `${max}+` : String(count);
+}
+
 /** Divide i follow-up in attesa in scaduti / oggi / prossimi, ordinati per scadenza. */
 export function groupPendingFollowups(followups: FollowupItem[], today: string): PendingFollowupGroups {
   const groups: PendingFollowupGroups = { overdue: [], today: [], upcoming: [] };

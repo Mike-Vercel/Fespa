@@ -18,7 +18,12 @@ export function SignUpForm({ defaultEmail }: { defaultEmail: string }) {
   const errors = state.fieldErrors ?? {};
 
   if (state.success && state.email && state !== dismissedState) {
-    return <SignupCodeStep email={state.email} onChangeEmail={() => setDismissedState(state)} />;
+    return (
+      <SignupCodeStep
+        email={state.email}
+        back={{ label: "Hai sbagliato email? Modificala", onClick: () => setDismissedState(state) }}
+      />
+    );
   }
 
   return (
