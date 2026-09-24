@@ -1,8 +1,9 @@
 <!doctype html>
 <!--
   Supabase → Authentication → Emails → "Confirm signup"
-  Oggetto consigliato: Benvenuta in FESPA · Conferma il tuo accesso
+  Oggetto consigliato: Il tuo codice FESPA
   Usato sia per le auto-iscrizioni sia per gli inviti della coach (primo link per una nuova email).
+  Il logo è servito dal sito ({{ .SiteURL }}/email/logo.png): PNG, perché non tutti i client email leggono WebP.
 -->
 <html lang="it">
   <head>
@@ -20,7 +21,9 @@
               <td align="center" style="padding:0 0 28px 0;">
                 <table role="presentation" cellpadding="0" cellspacing="0">
                   <tr>
-                    <td width="44" height="44" align="center" valign="middle" style="width:44px; height:44px; background-color:#1f1d1a; border-radius:12px; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:25px; line-height:44px; color:#f7f5f0;">F</td>
+                    <td width="44" height="44" valign="middle" style="width:44px; height:44px;">
+                      <img src="{{ .SiteURL }}/email/logo.png" width="44" height="44" alt="FESPA" style="display:block; width:44px; height:44px; border:0; border-radius:12px;" />
+                    </td>
                     <td style="padding-left:12px; font-family:-apple-system,'Segoe UI',Helvetica,sans-serif;">
                       <div style="font-size:12px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:#1f1d1a;">FESPA</div>
                       <div style="font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:16px; color:#4a6645;">Coach AI</div>
@@ -37,7 +40,6 @@
                   Conferma il tuo indirizzo email per attivare il tuo spazio personale. Da lì potrai completare il profilo,
                   condividere i tuoi check-in e restare in contatto con la tua coach.
                 </p>
-                <!-- Codice OTP: da inserire nella pagina di registrazione (su iPhone viene proposto sopra la tastiera). -->
                 <p style="margin:0 0 8px 0; font-size:14px; line-height:1.5; color:#57534c;">Il tuo codice di conferma è:</p>
                 <div style="margin:0 0 26px 0; padding:18px 12px; border-radius:12px; background-color:#f2efe9; border:1px solid #e3ddd3; text-align:center; font-family:'SF Mono',Menlo,Consolas,monospace; font-size:30px; font-weight:700; letter-spacing:8px; color:#1f1d1a;">{{ .Token }}</div>
                 <p style="margin:0 0 12px 0; font-size:14px; line-height:1.5; color:#57534c;">Oppure conferma con un clic:</p>
