@@ -30,8 +30,17 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: segreti e configurazioni locali non vanno MAI committati.
+# Unica eccezione: il modello con valori segnaposto.
 .env*
+!.env.example
+
+# chiavi e credenziali
+*.key
+*.p12
+secrets/
+supabase/.temp/
+supabase/.branches/
 
 # vercel
 .vercel

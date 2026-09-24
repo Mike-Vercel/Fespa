@@ -1,26 +1,604 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Design token di FESPA Coach AI.
+ * Palette neutra e calda + UN solo accento (verde muschio desaturato).
+ * La palette di default di Tailwind è disattivata: si possono usare solo questi colori.
+ * Contrasti verificati (WCAG AA): testo ≥ 4.5:1, bordi dei controlli ≥ 3:1.
+ */
+@theme {
+  --color-*: initial;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Superfici */
+  --color-paper: #f7f5f0;
+  --color-sidebar: #f0ede6;
+  --color-surface: #fffefb;
+  --color-hover: #ece8e0;
+  --color-sunken: #f2efe9;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Testo */
+  --color-ink: #1f1d1a;
+  --color-ink-hover: #34312c;
+  --color-ink-2: #57534c;
+  --color-ink-3: #69645c;
+  --color-on-ink: #f7f5f0;
+
+  /* Linee */
+  --color-line: #e3ddd3;
+  --color-line-strong: #cfc7ba;
+  --color-control: #948c7e;
+
+  /* Accento unico */
+  --color-accent: #4a6645;
+  --color-accent-strong: #3c5638;
+  --color-accent-soft: #e6ece2;
+
+  /* Stati (toni spenti, usati con parsimonia) */
+  --color-amber: #855712;
+  --color-amber-soft: #f5e8d2;
+  --color-rust: #9e3b2c;
+  --color-rust-soft: #f6e1db;
+  --color-sky: #2f6873;
+  --color-sky-soft: #e1eef0;
+
+  /* Toni neutri per gli avatar con iniziali */
+  --color-avatar-1: #e8e2d7;
+  --color-avatar-2: #dfe5da;
+  --color-avatar-3: #ece0d3;
+  --color-avatar-4: #e2dfda;
+
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-raised: 0 1px 2px rgb(31 29 26 / 0.05);
+  --shadow-popover: 0 12px 32px -12px rgb(31 29 26 / 0.22), 0 1px 3px rgb(31 29 26 / 0.08);
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-in: fade-in 160ms var(--ease-soft) both;
+  --animate-fade-out: fade-out 120ms ease-in both;
+  --animate-rise-in: rise-in 220ms var(--ease-soft) both;
+  --animate-pop-in: pop-in 160ms var(--ease-soft) both;
+  --animate-slide-in-left: slide-in-left 240ms var(--ease-soft) both;
+  --animate-slide-in-right: slide-in-right 260ms var(--ease-soft) both;
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(-2px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes slide-in-left {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+
+  @keyframes dashboard-welcome-in {
+    0% {
+      opacity: 0;
+      transform: translateY(18px) scale(0.92);
+    }
+    18%, 56% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    78% {
+      opacity: 0.9;
+      transform: translateY(-18vh) scale(0.8);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-42vh) scale(0.58);
+    }
+  }
+
+  @keyframes dashboard-welcome-halo {
+    0%, 100% {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+    35%, 70% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes dashboard-welcome-spark {
+    0%, 100% {
+      opacity: 0;
+      transform: translateY(18px) scale(0.4);
+    }
+    35% {
+      opacity: 0.85;
+      transform: translateY(0) scale(1);
+    }
+    75% {
+      opacity: 0;
+      transform: translateY(-70px) scale(0.7);
+    }
+  }
+
+  @keyframes dashboard-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .dashboard-welcome {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-content: center;
+    overflow: hidden;
+    background: rgb(247 245 240 / 0.94);
+    pointer-events: none;
+    animation: dashboard-welcome-in 1.9s var(--ease-soft) both;
+  }
+
+  .dashboard-welcome__halo {
+    position: absolute;
+    width: min(72vw, 620px);
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgb(230 236 226 / 0.9) 0%, rgb(225 238 240 / 0.42) 36%, transparent 70%);
+    filter: blur(10px);
+    animation: dashboard-welcome-halo 1.9s var(--ease-soft) both;
+  }
+
+  .dashboard-welcome__eyebrow,
+  .dashboard-welcome__title {
+    position: relative;
+    text-align: center;
+  }
+
+  .dashboard-welcome__eyebrow {
+    margin-bottom: 0.75rem;
+    color: var(--color-accent-strong);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+  }
+
+  .dashboard-welcome__title {
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-shadow: 0 10px 30px rgb(31 29 26 / 0.08);
+  }
+
+  .dashboard-welcome__title span {
+    color: var(--color-accent-strong);
+  }
+
+  .dashboard-welcome__spark {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--color-accent);
+    box-shadow: 0 0 18px 4px rgb(74 102 69 / 0.32);
+    animation: dashboard-welcome-spark 1.9s var(--ease-soft) both;
+  }
+
+  .dashboard-welcome__spark--one {
+    margin: -170px 0 0 -260px;
+  }
+
+  .dashboard-welcome__spark--two {
+    width: 5px;
+    height: 5px;
+    margin: -80px 0 0 310px;
+    animation-delay: 120ms;
+    background: var(--color-sky);
+  }
+
+  .dashboard-welcome__spark--three {
+    width: 4px;
+    height: 4px;
+    margin: 170px 0 0 210px;
+    animation-delay: 220ms;
+    background: var(--color-amber);
+  }
+
+  .dashboard-reveal {
+    animation: dashboard-reveal 650ms var(--ease-soft) both;
+  }
+
+  .dashboard-reveal--header {
+    animation-delay: 120ms;
+  }
+
+  .dashboard-reveal--metrics {
+    animation-delay: 220ms;
+  }
+
+  .dashboard-reveal--attention {
+    animation-delay: 320ms;
+  }
+
+  .dashboard-reveal--followups {
+    animation-delay: 390ms;
+  }
+
+  .dashboard-reveal--checkins {
+    animation-delay: 460ms;
+  }
+
+  /* Scroll morbido verso le sezioni solo nella home pubblica (disattivato con reduced motion). */
+  html:has(.landing-page) {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Numeri allineati in metriche e tabelle. */
+  .tabular {
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+}
+
+/*
+ * Tema scuro locale (es. il pannello del form sul login): ridefinisce i token solo dentro l'elemento,
+ * così campi, bottoni, link, messaggi e anello di focus si adattano senza varianti dedicate.
+ * Contrasti verificati su #1f1d1a: testo ≥ 6.5:1, bordi dei controlli ≥ 3:1 sullo sfondo dei campi.
+ * Il bottone primario si inverte da solo: "ink" diventa chiaro e "on-ink" scuro.
+ */
+.theme-dark {
+  --color-paper: #1f1d1a;
+  --color-surface: #292722;
+  --color-sunken: #2d2a26;
+  --color-hover: #36332e;
+  --color-ink: #f7f5f0;
+  --color-ink-hover: #e6e1d7;
+  --color-ink-2: #cfc9bd;
+  --color-ink-3: #aaa397;
+  --color-on-ink: #1f1d1a;
+  --color-line: #3b3832;
+  --color-line-strong: #4d4942;
+  --color-control: #8a8377;
+  --color-accent: #9fbf97;
+  --color-accent-strong: #b9d4b1;
+  --color-accent-soft: #2c3829;
+  --color-rust: #f2a898;
+  --color-rust-soft: #3e2520;
+  --color-amber: #e8c07a;
+  --color-amber-soft: #3a2f1c;
+  /* Anche i controlli nativi (autocompletamento, icone dei campi) passano al tema scuro. */
+  color-scheme: dark;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+}
+
+/*
+ * Accento viola delle pagine di accesso (i nastri delle foto): bordo e anello di focus dei campi.
+ * Contrasti ≥ 4.5:1 sullo sfondo dei campi, sia chiaro sia scuro.
+ */
+.accent-violet {
+  --color-accent: #6d4fe0;
+  --color-accent-strong: #5b3fc8;
+  --color-accent-soft: #eeeafd;
+}
+.theme-dark.accent-violet {
+  --color-accent: #b3a1ff;
+  --color-accent-strong: #cdc1ff;
+  --color-accent-soft: #2f2946;
+}
+
+/*
+ * "Mostra password": un nastro viola si avvolge a spirale attorno al campo (davanti, dietro, davanti…)
+ * e, dove è già passato, i pallini diventano lettere (sinistra → destra); "nascondi" fa il percorso
+ * inverso. Avvolgimento del nastro e ritaglio della copia a pallini hanno stessa durata e stessa curva:
+ * il fronte del nastro coincide sempre con il punto in cui il testo si scopre (o si ricopre).
+ */
+:root {
+  --password-sweep-duration: 1100ms;
+  --password-sweep-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Un giro dell'elica: 1 su 7 della larghezza dell'onda (vedi password-helix.tsx). */
+  --password-helix-turn: 14.2857%;
+}
+
+.password-mask-uncover {
+  animation: password-uncover var(--password-sweep-duration) var(--password-sweep-ease) both;
+}
+.password-mask-cover {
+  animation: password-cover var(--password-sweep-duration) var(--password-sweep-ease) both;
+}
+
+.password-helix {
+  filter: drop-shadow(0 0 5px rgb(139 108 240 / 0.55));
+}
+.password-helix-wrap-forward {
+  animation:
+    password-helix-wrap-forward var(--password-sweep-duration) var(--password-sweep-ease) both,
+    password-helix-fade var(--password-sweep-duration) linear both;
+}
+.password-helix-wrap-backward {
+  animation:
+    password-helix-wrap-backward var(--password-sweep-duration) var(--password-sweep-ease) both,
+    password-helix-fade var(--password-sweep-duration) linear both;
+}
+/* Mentre si avvolge, l'onda scorre di un giro: sembra un nastro che ruota attorno al campo. */
+.password-helix-spin-forward {
+  animation: password-helix-spin-forward var(--password-sweep-duration) linear both;
+}
+.password-helix-spin-backward {
+  animation: password-helix-spin-backward var(--password-sweep-duration) linear both;
+}
+
+@keyframes password-uncover {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+@keyframes password-cover {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes password-helix-wrap-forward {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes password-helix-wrap-backward {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+/* A fine corsa il nastro si dissolve: resta solo la password scoperta (o nascosta). */
+@keyframes password-helix-fade {
+  0%,
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes password-helix-spin-forward {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: calc(var(--password-helix-turn) * -1) 0;
+  }
+}
+@keyframes password-helix-spin-backward {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: var(--password-helix-turn) 0;
+  }
+}
+
+/*
+ * Nero lucido (barra del login su mobile): quasi nero, con un riflesso nella metà alta e un filo di
+ * luce sul bordo. Fa contrasto con il nero opaco del pannello del form sotto.
+ */
+@utility glossy-black {
+  background-color: #0c0b0a;
+  background-image:
+    linear-gradient(180deg, rgb(255 255 255 / 0.13) 0%, rgb(255 255 255 / 0.04) 46%, rgb(255 255 255 / 0) 54%),
+    linear-gradient(180deg, #1d1b18 0%, #0c0b0a 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    0 8px 20px -10px rgb(0 0 0 / 0.7);
+}
+
+/* Blocco segnaposto degli skeleton: shimmer leggero, statico con reduced motion. */
+@utility skeleton {
+  background-color: var(--color-sunken);
+  background-image: linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.6) 50%, transparent 100%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: var(--animate-shimmer);
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility text-pretty {
+  text-wrap: pretty;
+}
+
+/*
+ * Login ⇄ registrazione (View Transitions API, avviata da AuthSwapLink).
+ * I due pannelli si scambiano di lato: il form esce verso il basso e rientra dal basso
+ * nell'altra colonna, il pannello editoriale esce verso l'alto e rientra dall'alto.
+ * L'uscita ha un'anticipazione: il form viene prima "tirato su" di poco (rallentando, come
+ * quando si solleva qualcosa) e poi lasciato cadere (accelerando, come per gravità).
+ * Il pannello fa lo stesso a specchio: si abbassa un attimo per caricare la spinta, poi vola via.
+ * L'ingresso parte quando l'uscita è finita: prima si svuota la scena, poi si ricompone.
+ */
+:root {
+  --auth-swap-exit: 480ms;
+  --auth-swap-enter: 460ms;
+  --auth-swap-distance: 36vh;
+  --auth-swap-lift: 28px;
+  /* Salita: parte veloce e rallenta verso la cima. Caduta: parte da ferma e accelera. */
+  --auth-swap-ease-lift: cubic-bezier(0.33, 1, 0.68, 1);
+  --auth-swap-ease-drop: cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+::view-transition-old(.auth-form) {
+  /* linear: le accelerazioni sono definite tratto per tratto dentro i keyframe. */
+  animation: var(--auth-swap-exit) linear both auth-swap-out-down;
+}
+::view-transition-new(.auth-form) {
+  animation: var(--auth-swap-enter) var(--ease-soft) var(--auth-swap-exit) both auth-swap-in-from-below;
+}
+::view-transition-old(.auth-aside) {
+  animation: var(--auth-swap-exit) linear both auth-swap-out-up;
+}
+::view-transition-new(.auth-aside) {
+  animation: var(--auth-swap-enter) var(--ease-soft) var(--auth-swap-exit) both auth-swap-in-from-above;
+}
+
+/* Durante l'animazione i click passano alla pagina vera (il livello di transizione non li blocca). */
+::view-transition {
+  pointer-events: none;
+}
+
+@keyframes auth-swap-out-down {
+  0% {
+    translate: 0 0;
+    animation-timing-function: var(--auth-swap-ease-lift);
+  }
+  30% {
+    opacity: 1;
+    translate: 0 calc(var(--auth-swap-lift) * -1);
+    animation-timing-function: var(--auth-swap-ease-drop);
+  }
+  100% {
+    opacity: 0;
+    translate: 0 var(--auth-swap-distance);
+  }
+}
+@keyframes auth-swap-out-up {
+  0% {
+    translate: 0 0;
+    animation-timing-function: var(--auth-swap-ease-lift);
+  }
+  30% {
+    opacity: 1;
+    translate: 0 var(--auth-swap-lift);
+    animation-timing-function: var(--auth-swap-ease-drop);
+  }
+  100% {
+    opacity: 0;
+    translate: 0 calc(var(--auth-swap-distance) * -1);
+  }
+}
+@keyframes auth-swap-in-from-below {
+  from {
+    opacity: 0;
+    translate: 0 var(--auth-swap-distance);
+  }
+}
+@keyframes auth-swap-in-from-above {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--auth-swap-distance) * -1);
+  }
+}
+
+/* Rispetta la preferenza di sistema: niente animazioni né shimmer. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Anche le transizioni tra pagine: il contenuto cambia subito, senza movimento. */
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }

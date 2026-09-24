@@ -1,0 +1,57 @@
+<!doctype html>
+<!--
+  Supabase → Authentication → Emails → "Magic Link"
+  Oggetto consigliato: Il tuo link di accesso · FESPA
+  Usato per "Accedi con un link" e per i reinvii d'invito a email già registrate.
+-->
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Il tuo link di accesso</title>
+  </head>
+  <body style="margin:0; padding:0; background-color:#f4f1ea;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f1ea;">
+      <tr>
+        <td align="center" style="padding:40px 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+            <!-- Logo: monogramma e wordmark in solo testo, visibili anche con le immagini bloccate -->
+            <tr>
+              <td style="padding:0 0 24px 0;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td width="36" height="36" align="center" valign="middle" style="width:36px; height:36px; background-color:#1f1d1a; border-radius:8px; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:20px; line-height:36px; color:#f7f5f0;">F</td>
+                    <td style="padding-left:12px; font-family:-apple-system,'Segoe UI',Helvetica,sans-serif;">
+                      <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#1f1d1a;">FESPA</div>
+                      <div style="font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:15px; color:#5b574f;">Coach AI</div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="background-color:#ffffff; border:1px solid #e4dfd4; border-radius:12px; padding:32px 28px; font-family:-apple-system,'Segoe UI',Helvetica,sans-serif; color:#1f1d1a;">
+                <h1 style="margin:0 0 12px 0; font-family:Georgia,'Times New Roman',serif; font-weight:normal; font-size:26px; line-height:1.25;">Il tuo link di accesso</h1>
+                <p style="margin:0 0 24px 0; font-size:15px; line-height:1.6; color:#5b574f;">
+                  Usa il pulsante qui sotto per entrare in FESPA senza password.
+                </p>
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="border-radius:8px; background-color:#4a6645;">
+                      <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" style="display:inline-block; padding:12px 22px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none;">Accedi</a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:24px 0 0 0; font-size:13px; line-height:1.6; color:#8a8479;">
+                  Il link si può usare una sola volta e scade dopo poco tempo. Se non hai richiesto tu l'accesso,
+                  ignora questa email: il tuo account resta al sicuro.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
