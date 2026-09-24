@@ -19,7 +19,8 @@
     "db:migrations": "tsx --env-file-if-exists=.env.local scripts/supabase-db.ts list",
     "db:mark-applied": "tsx --env-file-if-exists=.env.local scripts/supabase-db.ts mark-applied",
     "images:webp": "tsx scripts/images-to-webp.ts",
-    "db:mark-reverted": "tsx --env-file-if-exists=.env.local scripts/supabase-db.ts mark-reverted"
+    "db:mark-reverted": "tsx --env-file-if-exists=.env.local scripts/supabase-db.ts mark-reverted",
+    "email:templates": "tsx --env-file-if-exists=.env.local scripts/supabase-email-templates.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",

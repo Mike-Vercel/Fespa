@@ -405,7 +405,16 @@ Cinque migration riproducibili in `supabase/migrations/`, da applicare in ordine
 
 L'app non ha un servizio email proprio: conferme, link di accesso, inviti e recupero password li invia **Supabase Auth**, con i template del progetto.
 
-**Template con il marchio FESPA** (`supabase/templates/`): monogramma e wordmark sono resi in HTML/CSS inline, quindi si vedono anche nei client che bloccano le immagini. Da *Authentication → Emails* incolla:
+**Template con il marchio FESPA** (`supabase/templates/`): logo PNG servito dal sito (`/email/logo.png`, con testo alternativo), stile unico per tutte le email, tutto in italiano. Si caricano in Supabase con un comando, che imposta anche gli oggetti e verifica il risultato:
+
+```bash
+npm run email:templates            # serve SUPABASE_ACCESS_TOKEN in .env.local
+npm run email:templates -- --check # confronta Supabase con i file del progetto
+```
+
+Supabase Auth tiene in memoria ogni template già usato per **10 minuti**: le email inviate subito dopo una modifica possono avere ancora la grafica precedente.
+
+In alternativa, da *Authentication → Emails* incolla a mano:
 
 | Template Supabase | File | Oggetto consigliato |
 |---|---|---|
