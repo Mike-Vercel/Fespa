@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/shell/page-header";
 import { UserDirectory } from "@/features/admin/user-directory";
-import { GROUP_ICONS, GROUP_TITLES, GROUP_TONES } from "@/features/admin/user-groups";
-import { cn } from "@/lib/cn";
 import { pluralize } from "@/lib/format";
 import { requireAdmin } from "@/server/auth/session";
 import { getServerEnv } from "@/server/env";
@@ -18,7 +16,7 @@ export default async function UsersPage() {
   const timezone = getServerEnv().APP_TIMEZONE;
 
   return (
-    <div className="flex max-w-5xl flex-col gap-7 animate-rise-in">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-7 animate-rise-in">
       <PageHeader
         eyebrow="Amministrazione"
         title="Utenti registrati"
@@ -31,21 +29,6 @@ export default async function UsersPage() {
           </>
         }
       />
-
-      <section aria-label="Riepilogo utenti" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {groups.map((group) => {
-          const Icon = GROUP_ICONS[group.role];
-          return (
-            <div key={group.role} className={cn("rounded-lg border border-line border-t-4 bg-surface p-4 shadow-raised", GROUP_TONES[group.role])}>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium uppercase tracking-[0.1em] text-ink-3">{GROUP_TITLES[group.role]}</span>
-                <Icon aria-hidden="true" className="size-4 text-ink-3" strokeWidth={1.8} />
-              </div>
-              <p className="tabular mt-2 font-serif text-3xl leading-none text-ink">{group.users.length}</p>
-            </div>
-          );
-        })}
-      </section>
 
       <UserDirectory
         groups={groups}

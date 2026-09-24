@@ -26,7 +26,7 @@ export function Topbar({ coach, today, aiStatus, counts }: TopbarProps) {
         <LogoMark />
       </Link>
 
-      <p className="hidden text-sm text-ink-3 lg:block">{formatLongDate(today)}</p>
+      <p className="hidden text-sm font-medium text-white lg:block">{formatLongDate(today)}</p>
 
       <div className="ml-auto flex items-center gap-3">
         <AIStatusPill status={aiStatus} className="hidden sm:inline-flex" />
