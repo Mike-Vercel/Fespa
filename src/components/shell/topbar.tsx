@@ -19,7 +19,8 @@ type TopbarProps = {
 
 export function Topbar({ coach, today, aiStatus, counts }: TopbarProps) {
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-line bg-paper px-4 sm:px-6 lg:px-10">
+    // Nera: il tema scuro locale adatta da solo testi, badge e menu (vedi .theme-dark e .app-topbar).
+    <header className="theme-dark app-topbar sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-line bg-paper px-4 sm:px-6 lg:px-10">
       <MobileNav counts={counts} showAdmin={isAdminRole(coach.role)} />
       <Link href="/dashboard" aria-label="FESPA Coach AI, vai alla dashboard" className="rounded-md lg:hidden">
         <LogoMark />

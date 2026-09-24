@@ -49,7 +49,7 @@ export function AppSidebar({ collapsedPreference, counts, showAdmin }: AppSideba
     <aside
       id="app-sidebar"
       className={cn(
-        "sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-line bg-sidebar transition-[width] duration-200 ease-(--ease-soft) lg:flex",
+        "sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-line bg-white transition-[width] duration-200 ease-(--ease-soft) lg:flex",
         collapsed ? "w-[72px]" : "w-[248px]",
       )}
     >

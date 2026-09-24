@@ -22,7 +22,7 @@ export function MobileNav({ counts, showAdmin }: { counts: Record<NavigationCoun
         <Menu aria-hidden="true" className="size-5" strokeWidth={1.75} />
       </DialogTrigger>
 
-      <SheetContent side="left" title="Menu" hideHeader className="bg-sidebar">
+      <SheetContent side="left" title="Menu" hideHeader className="bg-white">
         <div className="flex h-16 shrink-0 items-center gap-3 px-5">
           <LogoMark />
           <Wordmark />

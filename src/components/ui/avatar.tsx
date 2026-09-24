@@ -6,6 +6,7 @@ const SIZES = {
   sm: "size-8 text-[13px]",
   md: "size-10 text-[15px]",
   lg: "size-14 text-xl",
+  xl: "size-20 text-[28px]",
 } as const;
 
 function initialsOf(name: string): string {
@@ -33,7 +34,7 @@ export function Avatar({ name, size = "md", className }: { name: string; size?: 
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex shrink-0 select-none items-center justify-center rounded-full font-serif font-medium text-ink-2",
+        "inline-flex shrink-0 select-none items-center justify-center rounded-full font-serif font-medium text-avatar-ink",
         toneOf(name),
         SIZES[size],
         className,

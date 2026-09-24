@@ -33,14 +33,14 @@ export function ProfileForm({ initialName }: { initialName: string }) {
       }}
       className="flex max-w-md flex-col gap-4"
     >
-      <Field id="profile-name" label="Nome e cognome" errors={errors} hint="Visibile alle colleghe che seguono le tue stesse clienti.">
+      <Field id="profile-name" label="Nome e cognome" errors={errors}>
         <Input
           id="profile-name"
           value={fullName}
           onChange={(event) => setFullName(event.target.value)}
           maxLength={PROFILE_NAME_MAX_LENGTH}
           autoComplete="name"
-          {...describedBy("profile-name", errors, true)}
+          {...describedBy("profile-name", errors)}
         />
       </Field>
       <div>

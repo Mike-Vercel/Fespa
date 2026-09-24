@@ -41,11 +41,16 @@
   --color-sky: #2f6873;
   --color-sky-soft: #e1eef0;
 
-  /* Toni neutri per gli avatar con iniziali */
+  /* Toni neutri per gli avatar con iniziali; le iniziali restano scure anche dentro il tema scuro. */
   --color-avatar-1: #e8e2d7;
   --color-avatar-2: #dfe5da;
   --color-avatar-3: #ece0d3;
   --color-avatar-4: #e2dfda;
+  --color-avatar-ink: #57534c;
+
+  /* Bianco e nero pieni: sidebar e barra della home (bianco), barra superiore dell'app (nero). */
+  --color-white: #ffffff;
+  --color-black: #0c0b0a;
 
   --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
@@ -573,6 +578,14 @@
   color-scheme: dark;
   color: var(--color-ink);
   background-color: var(--color-paper);
+}
+
+/* Barra superiore dell'app: tema scuro, ma su nero pieno invece del grigio caldo del tema. */
+.app-topbar {
+  --color-paper: #0c0b0a;
+  --color-surface: #1a1816;
+  --color-hover: #262320;
+  --color-line: #2a2724;
 }
 
 /*

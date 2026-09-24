@@ -7,7 +7,7 @@ import { Container } from "./primitives";
 /** Barra superiore fissa: la CTA di registrazione resta sempre a portata di mano. */
 export function LandingHeader() {
   return (
-    <header className="landing-header sticky top-0 z-30 border-b border-line/70 bg-white/85 backdrop-blur-xl">
+    <header className="landing-header sticky top-0 z-30 border-b border-line/70 bg-white">
       <Container className="flex h-16 items-center justify-between gap-3">
         <Link href="/" className="flex min-w-0 items-center rounded-md py-1" aria-label="FESPA Coach AI, torna all'inizio">
           <Image src="/images/brand/logo-homepage.webp" alt="FESPA Coach AI" width={92} height={46} className="h-11 w-[88px] object-contain" priority />

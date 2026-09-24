@@ -1,13 +1,14 @@
+import { KeyRound, Mail, ShieldCheck, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader, SectionHeader } from "@/components/shell/page-header";
+import { PageHeader } from "@/components/shell/page-header";
 import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { calendarDateIn } from "@/domain/dates";
 import { canManageRoles } from "@/domain/roles";
 import { EmailForm } from "@/features/profile/email-form";
 import { PasswordForm } from "@/features/profile/password-form";
 import { ProfileForm } from "@/features/profile/profile-form";
+import { SettingsCard } from "@/features/profile/settings-card";
 import { formatCalendarDate, formatRelativeInstant } from "@/lib/format";
 import { ROLE_LABELS } from "@/lib/labels";
 import { requireCoach } from "@/server/auth/session";
@@ -33,82 +34,104 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
   const now = new Date();
   const emailNotice = EMAIL_NOTICES[firstParam(params.email) ?? ""];
 
+  const facts = [
+    { label: "Ruolo", value: ROLE_LABELS[coach.role] },
+    { label: "Nel team dal", value: formatCalendarDate(calendarDateIn(timezone, account.createdAt), { withYear: true }) },
+    { label: "Ultimo accesso", value: account.lastSignInAt ? formatRelativeInstant(account.lastSignInAt, now, timezone) : "—" },
+  ];
+
   return (
-    <div className="flex flex-col gap-10 animate-rise-in">
+    <div className="flex max-w-4xl flex-col gap-6 animate-rise-in">
       <PageHeader title="Profilo" description="I tuoi dati e l'accesso all'app: puoi cambiarli da qui." />
 
-      <div className="flex items-center gap-4">
-        <Avatar name={coach.fullName} size="lg" />
-        <div className="min-w-0">
-          <p className="font-serif text-xl text-ink">{coach.fullName}</p>
-          <p className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-ink-2">
-            <span className="truncate">{account.email}</span>
-            <Badge tone="neutral">{ROLE_LABELS[coach.role]}</Badge>
+      <section aria-label="Il tuo account" className="overflow-hidden rounded-xl border border-line bg-surface shadow-raised">
+        <div
+          aria-hidden="true"
+          className="h-24 bg-[linear-gradient(120deg,var(--color-accent-soft),var(--color-sky-soft)_55%,var(--color-amber-soft))] sm:h-28"
+        />
+        <div className="px-6 pb-6 sm:px-8 sm:pb-8">
+          {/* Solo l'avatar si sovrappone alla fascia colorata; nome ed email restano sul bianco. */}
+          <Avatar name={coach.fullName} size="xl" className="-mt-10 ring-4 ring-surface" />
+          <div className="mt-3 min-w-0">
+            <p className="truncate font-serif text-2xl leading-tight text-ink">{coach.fullName}</p>
+            <p className="mt-1 truncate text-sm text-ink-2">{account.email}</p>
+          </div>
+
+          <dl className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {facts.map((fact) => (
+              <div key={fact.label} className="rounded-lg bg-sunken px-4 py-3">
+                <dt className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-3">{fact.label}</dt>
+                <dd className="mt-1 text-[15px] font-medium text-ink">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <SettingsCard
+        id="profile-data"
+        icon={UserRound}
+        title="Dati personali"
+        description="Il nome con cui ti vedono le colleghe e le clienti che segui."
+      >
+        <ProfileForm initialName={coach.fullName} />
+      </SettingsCard>
+
+      <SettingsCard
+        id="profile-email"
+        icon={Mail}
+        title="Email di accesso"
+        description="È anche l'indirizzo a cui arrivano i messaggi dell'app."
+      >
+        <div className="flex flex-col gap-4">
+          {emailNotice ? (
+            <p role="status" className="rounded-md bg-accent-soft px-4 py-3.5 text-sm text-pretty text-accent-strong">
+              {emailNotice}
+            </p>
+          ) : null}
+          <EmailForm currentEmail={account.email} initialPendingEmail={account.pendingEmail} />
+        </div>
+      </SettingsCard>
+
+      <SettingsCard
+        id="profile-password"
+        icon={KeyRound}
+        title="Password"
+        description="Serve quella attuale: così chi trova una sessione aperta non può cambiarla al posto tuo."
+      >
+        <PasswordForm />
+      </SettingsCard>
+
+      <SettingsCard
+        id="profile-security"
+        icon={ShieldCheck}
+        title="Ruolo e sicurezza"
+        description="Cosa puoi fare nell'app e dove chiudere le sessioni aperte."
+      >
+        <div className="flex flex-col gap-3 text-sm text-pretty text-ink-2">
+          <p>
+            Sei <span className="font-medium text-ink">{ROLE_LABELS[coach.role]}</span>.{" "}
+            {canManageRoles(coach.role) ? (
+              <>
+                Puoi cambiare i ruoli degli altri da{" "}
+                <Link href="/admin/users" className={INLINE_LINK}>
+                  Utenti registrati
+                </Link>
+                , non il tuo: così il team non resta mai senza un super admin.
+              </>
+            ) : (
+              "Il ruolo lo assegna il super admin: non si può cambiare da qui."
+            )}
+          </p>
+          <p>
+            Hai usato l&apos;app su un computer condiviso? Chiudi tutte le sessioni da{" "}
+            <Link href="/settings" className={INLINE_LINK}>
+              Impostazioni
+            </Link>
+            .
           </p>
         </div>
-      </div>
-
-      <section aria-labelledby="profile-data" className="flex max-w-2xl flex-col gap-5">
-        <SectionHeader id="profile-data" title="Dati personali" />
-        <ProfileForm initialName={coach.fullName} />
-      </section>
-
-      <section aria-labelledby="profile-email" className="flex max-w-2xl flex-col gap-5">
-        <SectionHeader id="profile-email" title="Email di accesso" />
-        {emailNotice ? (
-          <p role="status" className="max-w-md rounded-md bg-accent-soft px-4 py-3.5 text-sm text-pretty text-accent-strong">
-            {emailNotice}
-          </p>
-        ) : null}
-        <EmailForm currentEmail={account.email} initialPendingEmail={account.pendingEmail} />
-      </section>
-
-      <section aria-labelledby="profile-password" className="flex max-w-2xl flex-col gap-5">
-        <SectionHeader
-          id="profile-password"
-          title="Password"
-          description="Serve quella attuale: così chi trova una sessione aperta non può cambiarla al posto tuo."
-        />
-        <PasswordForm />
-      </section>
-
-      <section aria-labelledby="profile-account" className="flex max-w-2xl flex-col gap-5">
-        <SectionHeader id="profile-account" title="Account" />
-        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-8 gap-y-3 text-sm">
-          <dt className="text-ink-3">Ruolo</dt>
-          <dd className="flex flex-col gap-1 text-ink">
-            <span>{ROLE_LABELS[coach.role]}</span>
-            <span className="text-pretty text-ink-3">
-              {canManageRoles(coach.role) ? (
-                <>
-                  Puoi cambiare i ruoli degli altri da{" "}
-                  <Link href="/admin/users" className={INLINE_LINK}>
-                    Utenti registrati
-                  </Link>
-                  , non il tuo: così il team non resta mai senza un super admin.
-                </>
-              ) : (
-                "Lo assegna il super admin: non si può cambiare da qui."
-              )}
-            </span>
-          </dd>
-          <dt className="text-ink-3">Nel team dal</dt>
-          <dd className="text-ink">
-            {formatCalendarDate(calendarDateIn(timezone, account.createdAt), { withYear: true })}
-          </dd>
-          <dt className="text-ink-3">Ultimo accesso</dt>
-          <dd className="text-ink">
-            {account.lastSignInAt ? formatRelativeInstant(account.lastSignInAt, now, timezone) : "—"}
-          </dd>
-        </dl>
-        <p className="text-sm text-pretty text-ink-3">
-          Per chiudere le sessioni aperte su altri dispositivi vai in{" "}
-          <Link href="/settings" className={INLINE_LINK}>
-            Impostazioni
-          </Link>
-          .
-        </p>
-      </section>
+      </SettingsCard>
     </div>
   );
 }

@@ -33,15 +33,14 @@ export function SidebarNav({ items, collapsed, counts, onNavigate }: SidebarNavP
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "group relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-surface text-ink shadow-raised ring-1 ring-line"
-                    : "text-ink-2 hover:bg-hover hover:text-ink",
+                  // Voce attiva: pillola nera, come la barra superiore.
+                  isActive ? "bg-black text-on-ink shadow-raised" : "text-ink-2 hover:bg-hover hover:text-ink",
                 )}
               >
                 <Icon
                   aria-hidden="true"
                   strokeWidth={1.75}
-                  className={cn("size-[18px] shrink-0", isActive ? "text-accent" : "text-ink-3 group-hover:text-ink-2")}
+                  className={cn("size-[18px] shrink-0", isActive ? "text-on-ink" : "text-ink-3 group-hover:text-ink-2")}
                 />
                 <span className={cn("truncate", collapsed && "sr-only")}>{item.label}</span>
 
@@ -55,7 +54,10 @@ export function SidebarNav({ items, collapsed, counts, onNavigate }: SidebarNavP
                     ) : (
                       <span
                         aria-hidden="true"
-                        className="tabular ml-auto rounded-full bg-sunken px-2 py-0.5 text-xs font-medium text-ink-2 ring-1 ring-line"
+                        className={cn(
+                          "tabular ml-auto rounded-full px-2 py-0.5 text-xs font-medium",
+                          isActive ? "bg-on-ink text-ink" : "bg-sunken text-ink-2 ring-1 ring-line",
+                        )}
                       >
                         {count}
                       </span>
