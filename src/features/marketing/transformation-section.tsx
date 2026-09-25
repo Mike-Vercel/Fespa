@@ -18,6 +18,7 @@ import { MotionNoScript } from "./reveal";
 /*
  * Hero "Il tuo percorso comincia da te": emerge dal bianco in cui sfuma il portale FESPA
  * (vedi hero-portal.tsx). Server component: solo lo slider PRIMA/DOPO è client.
+ * Desktop: foto a sinistra e testo a destra (lg:order). Mobile: prima il testo, poi la foto.
  *
  * Asset (public/images/homepage), usati così come sono: pre-metodo / post-metodo, stessa inquadratura
  * 1024×1536 sovrapposta nello slider. Il nastro FESPA è già nelle foto; attorno solo bianco
@@ -30,10 +31,10 @@ export function TransformationSection() {
   return (
     <section
       aria-labelledby="percorso-title"
-      className="transformation-section relative isolate overflow-hidden bg-white lg:grid lg:min-h-[max(40rem,calc(100svh-65px))] lg:grid-cols-[minmax(0,44fr)_minmax(0,56fr)]"
+      className="transformation-section relative isolate overflow-hidden bg-white lg:grid lg:min-h-[max(40rem,calc(100svh-65px))] lg:grid-cols-[minmax(0,56fr)_minmax(0,44fr)]"
     >
       <MotionNoScript />
-      <div className="transformation-copy relative z-10 flex flex-col justify-center px-4 pb-10 pt-16 sm:px-6 lg:py-16 lg:pl-[5vw] lg:pr-6">
+      <div className="transformation-copy relative z-10 flex flex-col justify-center px-4 pb-10 pt-16 sm:px-6 lg:order-2 lg:py-16 lg:pl-6 lg:pr-[5vw]">
         <h2 id="percorso-title" className="font-serif text-[clamp(2.4rem,11.4vw,4.3rem)] leading-[0.98] tracking-[-0.035em] text-ink lg:text-[clamp(3rem,5vw,5.6rem)]">
           <WordsRise text="Il tuo percorso" />
           <AccentSweep text="comincia da te" className="transformation-accent pb-[0.08em] pr-[0.06em]" />
@@ -72,7 +73,7 @@ export function TransformationSection() {
       </div>
 
       {/* Dalla testa a metà coscia (gli originali finiscono a metà stinco): il bordo inferiore sfuma. */}
-      <div className="transformation-visual relative z-[6] flex justify-center sm:pb-6 lg:items-center lg:px-6 lg:py-[4svh]">
+      <div className="transformation-visual relative z-[6] flex justify-center sm:pb-6 lg:order-1 lg:items-center lg:px-6 lg:py-[4svh]">
         <CurtainReveal className="aspect-[5/6] w-full sm:h-[62svh] sm:w-auto lg:h-[82%]">
           <BeforeAfterSlider
             before={{ src: "/images/homepage/pre-metodo.webp", alt: "Prima: la stessa donna all'inizio del percorso, davanti allo specchio" }}
