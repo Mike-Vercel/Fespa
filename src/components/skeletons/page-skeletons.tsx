@@ -196,14 +196,42 @@ export function ClientDetailSkeleton() {
   );
 }
 
+/** Stessa struttura della pagina Follow-up: intestazione con azioni, tre pannelli per scadenza. */
 export function FollowupPageSkeleton() {
   return (
-    <LoadingRegion label="Caricamento dei follow-up" className="flex flex-col gap-10">
-      <PageHeaderSkeleton withEyebrow={false} />
+    <LoadingRegion label="Caricamento dei follow-up" className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-12 w-52 sm:h-14" />
+          <Skeleton className="h-4 w-96 max-w-full" />
+          <Skeleton className="h-4 w-80 max-w-full" />
+        </div>
+        <div className="flex flex-col gap-4 sm:items-end">
+          <Skeleton className="h-12 w-48 rounded-xl" />
+          <Skeleton className="h-12 w-64 rounded-xl" />
+        </div>
+      </div>
       {Array.from({ length: 3 }, (_, index) => (
-        <div key={index}>
-          <SectionHeaderSkeleton />
-          <ListRowsSkeleton rows={3} withAvatar={false} />
+        <div key={index} className="rounded-2xl border border-line/80 bg-surface px-5 lg:px-6">
+          <div className="flex items-center gap-3 border-b border-line/80 py-4">
+            <Skeleton className="size-5 rounded-md" />
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-7 w-7 rounded-full" />
+          </div>
+          <div className="divide-y divide-line/80">
+            {Array.from({ length: 2 }, (_, row) => (
+              <div key={row} className="flex items-center gap-3 py-4">
+                <Skeleton className="size-[22px] shrink-0 rounded-full" />
+                <div className="flex flex-1 flex-col gap-2">
+                  <Skeleton className="h-4 w-64 max-w-full" />
+                  <Skeleton className="h-3.5 w-28" />
+                  <Skeleton className="h-3.5 w-96 max-w-full" />
+                </div>
+                <Skeleton className="hidden h-8 w-32 rounded-full sm:block" />
+                <Skeleton className="hidden h-8 w-20 rounded-lg sm:block" />
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </LoadingRegion>
@@ -289,16 +317,53 @@ export function PortalSkeleton() {
   );
 }
 
+/** Stessa struttura di Utenti registrati: intestazione, ricerca, quattro card per ruolo, pannello con le righe. */
 export function UsersSkeleton() {
   return (
-    <LoadingRegion label="Caricamento degli utenti" className="flex flex-col gap-10">
-      <PageHeaderSkeleton />
-      {Array.from({ length: 3 }, (_, index) => (
-        <div key={index}>
-          <SectionHeaderSkeleton />
-          <ListRowsSkeleton rows={3} />
+    <LoadingRegion label="Caricamento degli utenti" className="flex flex-col gap-7">
+      <div className="flex flex-col gap-3">
+        <Skeleton className="h-3 w-32" />
+        <Skeleton className="h-12 w-72 max-w-full sm:h-14" />
+        <Skeleton className="h-4 w-full max-w-2xl" />
+      </div>
+      <Skeleton className="h-[50px] w-full rounded-full" />
+      <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 xl:grid-cols-4 xl:gap-5">
+        {Array.from({ length: 4 }, (_, index) => (
+          <div key={index} className="flex items-start justify-between rounded-2xl border border-line/80 bg-surface px-5 py-5">
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-9 w-10" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+            <Skeleton className="size-11 rounded-full" />
+          </div>
+        ))}
+      </div>
+      <div className="overflow-hidden rounded-2xl border border-line/80 bg-surface">
+        <div className="flex items-center gap-4 border-b border-line/80 px-5 py-5 lg:px-9">
+          <Skeleton className="size-12 rounded-full" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-3 w-16" />
+          </div>
         </div>
-      ))}
+        <div className="divide-y divide-line/80 px-5 lg:px-9">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className="flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:gap-6">
+              <div className="flex flex-1 items-center gap-4">
+                <Skeleton className="size-[50px] shrink-0 rounded-full" />
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-3.5 w-52" />
+                  <Skeleton className="h-3 w-64 max-w-full" />
+                </div>
+              </div>
+              <Skeleton className="h-6 w-32 rounded-full lg:flex-1 lg:grow-0" />
+              <Skeleton className="h-11 w-full rounded-lg lg:w-64" />
+            </div>
+          ))}
+        </div>
+      </div>
     </LoadingRegion>
   );
 }

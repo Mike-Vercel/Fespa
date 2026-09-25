@@ -46,7 +46,7 @@ export function CompleteFollowupButton({ followupId, title }: { followupId: stri
         onClick={() => changeStatus("completed", "Follow-up completato", "pending")}
         disabled={isPending}
         aria-label={`Segna come completato: ${title}`}
-        className="group inline-flex size-5 items-center justify-center rounded-full border-[1.5px] border-control text-accent transition-colors hover:border-accent hover:bg-accent-soft disabled:opacity-60"
+        className="group inline-flex size-[22px] items-center justify-center rounded-full border-[1.5px] border-control text-accent transition-colors hover:border-accent hover:bg-accent-soft disabled:opacity-60"
       >
         {isPending ? (
           <Spinner className="size-3" />
@@ -68,7 +68,7 @@ export function FollowupSecondaryAction({ followupId, status }: { followupId: st
         type="button"
         disabled={isPending}
         onClick={() => changeStatus("cancelled", "Follow-up annullato", "pending")}
-        className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-[13px] text-ink-3 transition-colors hover:bg-hover hover:text-ink disabled:opacity-60"
+        className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-[14px] text-ink-2 transition-colors hover:bg-sunken hover:text-ink disabled:opacity-60"
       >
         {isPending ? <Spinner /> : <X aria-hidden="true" className="size-3.5" strokeWidth={2} />}
         Annulla
@@ -81,7 +81,7 @@ export function FollowupSecondaryAction({ followupId, status }: { followupId: st
       type="button"
       disabled={isPending}
       onClick={() => changeStatus("pending", "Follow-up riaperto")}
-      className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-[13px] text-ink-3 transition-colors hover:bg-hover hover:text-ink disabled:opacity-60"
+      className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-[14px] text-ink-2 transition-colors hover:bg-sunken hover:text-ink disabled:opacity-60"
     >
       {isPending ? <Spinner /> : <RotateCcw aria-hidden="true" className="size-3.5" strokeWidth={2} />}
       Riapri

@@ -88,7 +88,7 @@ export function UserDirectory({ groups, canManageRoles, currentUserId, now, time
         </p>
       </div>
 
-      <div role="group" aria-label="Filtra per ruolo" className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 xl:grid-cols-4 xl:gap-5">
+      <div role="group" aria-label="Filtra per ruolo" className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4 xl:gap-5">
         {matches.map((group, index) => {
           const Icon = GROUP_ICONS[group.role];
           const tone = GROUP_TONES[group.role];
@@ -101,7 +101,7 @@ export function UserDirectory({ groups, canManageRoles, currentUserId, now, time
               aria-pressed={isSelected}
               onClick={() => toggleRole(group.role)}
               className={cn(
-                "flex items-start justify-between gap-3 rounded-2xl border border-line/80 border-t-[3px] bg-surface px-5 pb-5 pt-5 text-left transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgb(31_29_26/0.04),0_18px_36px_-22px_rgb(31_29_26/0.3)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                "flex min-w-0 items-start justify-between gap-3 rounded-2xl border border-line/80 border-t-[3px] bg-surface px-4 pb-4 pt-4 text-left sm:px-5 sm:pb-5 sm:pt-5 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgb(31_29_26/0.04),0_18px_36px_-22px_rgb(31_29_26/0.3)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                 CARD_SHADOW,
                 tone.accent,
                 isSelected && cn("bg-white ring-2", tone.selected),
@@ -109,15 +109,15 @@ export function UserDirectory({ groups, canManageRoles, currentUserId, now, time
               )}
             >
               <span className="flex min-w-0 flex-col">
-                <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-2">{GROUP_TITLES[group.role]}</span>
-                <span className="tabular mt-3 font-serif text-[40px] leading-none text-ink">
+                <span className="truncate text-[12px] font-semibold uppercase tracking-[0.06em] text-ink-2 sm:text-[13px] sm:tracking-[0.08em]">{GROUP_TITLES[group.role]}</span>
+                <span className="tabular mt-3 font-serif text-[34px] leading-none text-ink sm:text-[40px]">
                   {isSearching ? group.users.length : total}
                 </span>
                 <span className="mt-2 text-[14px] text-ink-3">
                   {isSearching ? `${group.users.length === 1 ? "trovato" : "trovati"} su ${total}` : "account"}
                 </span>
               </span>
-              <span aria-hidden="true" className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-full", tone.icon)}>
+              <span aria-hidden="true" className={cn("hidden size-11 shrink-0 items-center justify-center rounded-full sm:inline-flex", tone.icon)}>
                 <Icon className="size-5" strokeWidth={1.7} />
               </span>
             </button>
