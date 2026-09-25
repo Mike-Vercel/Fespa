@@ -46,7 +46,7 @@ export function UserRoleControl({ userId, fullName, role, assignedClientCount, h
   }
 
   return (
-    <div className="flex flex-col gap-2 sm:items-end">
+    <div className="flex flex-col gap-2">
       <label htmlFor={selectId} className="sr-only">
         Ruolo di {fullName}
       </label>
@@ -55,7 +55,7 @@ export function UserRoleControl({ userId, fullName, role, assignedClientCount, h
         value={selected}
         disabled={isPending}
         onChange={(event) => setSelected(USER_ROLES.find((candidate) => candidate === event.target.value) ?? role)}
-        className="w-full sm:w-48"
+        className="h-11 w-full rounded-lg border-line-strong/80 bg-surface"
       >
         {USER_ROLES.map((candidate) => (
           <option key={candidate} value={candidate}>
@@ -65,7 +65,7 @@ export function UserRoleControl({ userId, fullName, role, assignedClientCount, h
       </Select>
 
       {effects.length > 0 ? (
-        <div role="group" aria-label="Conferma il cambio di ruolo" className="flex w-full flex-col gap-2 rounded-md bg-sunken p-3 text-sm sm:w-72">
+        <div role="group" aria-label="Conferma il cambio di ruolo" className="flex w-full flex-col gap-2 rounded-lg bg-sunken p-3 text-sm ring-1 ring-inset ring-line/70">
           <ul className="flex flex-col gap-1 text-ink-2">
             {effects.map((effect) => (
               <li key={effect}>{effect}</li>

@@ -66,6 +66,15 @@ export async function listPendingFollowupsDueBy(db: AppSupabaseClient, lastDay: 
   return data.map(toFollowupItem);
 }
 
+/** Solo le scadenze (qualsiasi stato) tra due giorni inclusi: bastano per l'andamento in dashboard. */
+export async function listFollowupDueDatesBetween(db: AppSupabaseClient, firstDay: string, lastDay: string): Promise<string[]> {
+  const { data, error } = await db.from("followups").select("due_on").gte("due_on", firstDay).lte("due_on", lastDay);
+  if (error) {
+    throw new DataAccessError("followups.listDueDatesBetween", error);
+  }
+  return data.map((row) => row.due_on);
+}
+
 export async function listFollowupsByStatus(
   db: AppSupabaseClient,
   statuses: FollowupStatus[],

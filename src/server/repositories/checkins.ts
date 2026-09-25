@@ -97,6 +97,15 @@ export const countPendingReview = cache(async (db: AppSupabaseClient, submittedB
   return count ?? 0;
 });
 
+/** Solo gli istanti di invio da `since` in poi: bastano per l'andamento giornaliero in dashboard. */
+export async function listCheckinTimesSince(db: AppSupabaseClient, since: string): Promise<string[]> {
+  const { data, error } = await db.from("checkins").select("submitted_at").gte("submitted_at", since);
+  if (error) {
+    throw new DataAccessError("checkins.listTimesSince", error);
+  }
+  return data.map((row) => row.submitted_at);
+}
+
 export async function findCheckin(db: AppSupabaseClient, checkinId: string): Promise<CheckinItem | null> {
   const { data, error } = await db.from("checkins").select(CHECKIN_COLUMNS).eq("id", checkinId).maybeSingle();
   if (error) {

@@ -53,7 +53,7 @@ export function RegistrationDecision({ clientId, fullName, staff, canReject, isR
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
       {isRestore ? null : (
-        <Field id={selectId} label="Coach da assegnare (facoltativa)" errors={coachErrors} className="sm:w-64">
+        <Field id={selectId} label="Coach da assegnare (facoltativa)" errors={coachErrors} className="sm:w-72">
           <Select
             id={selectId}
             value={coachId}
@@ -61,6 +61,7 @@ export function RegistrationDecision({ clientId, fullName, staff, canReject, isR
               setCoachId(event.target.value);
               setCoachErrors(undefined);
             }}
+            className="rounded-lg border-line-strong/80 bg-surface"
             {...describedBy(selectId, coachErrors)}
           >
             <option value="">Nessuna coach per ora</option>
@@ -74,18 +75,19 @@ export function RegistrationDecision({ clientId, fullName, staff, canReject, isR
         </Field>
       )}
       <div className="flex flex-wrap gap-2">
-          <Button
+        <Button
           variant="primary"
           onClick={approve}
           isLoading={isPending}
+          className="rounded-lg"
           icon={<Check aria-hidden="true" className="size-4" strokeWidth={2} />}
-          >
-            {isRestore ? "Ripristina" : coachId ? "Approva e assegna" : "Approva senza assegnare"}
+        >
+          {isRestore ? "Ripristina" : coachId ? "Approva e assegna" : "Approva senza assegnare"}
         </Button>
         {canReject ? (
           <ConfirmDialog
             trigger={
-              <Button variant="ghost" disabled={isPending} icon={<X aria-hidden="true" className="size-4" strokeWidth={2} />}>
+              <Button variant="ghost" disabled={isPending} className="rounded-lg" icon={<X aria-hidden="true" className="size-4" strokeWidth={2} />}>
                 Rifiuta
               </Button>
             }

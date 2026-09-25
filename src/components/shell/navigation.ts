@@ -1,7 +1,7 @@
 import {
   CalendarCheck2,
   Inbox,
-  LayoutDashboard,
+  LayoutGrid,
   Settings,
   ShieldUser,
   UserCheck,
@@ -18,10 +18,12 @@ export type NavigationItem = {
   icon: LucideIcon;
   /** Contatore mostrato accanto alla voce e annunciato agli screen reader. */
   count?: { key: NavigationCountKey; description: string };
+  /** Icona piena quando la voce è attiva (solo dove la forma lo permette, es. la griglia della dashboard). */
+  fillIconWhenActive?: boolean;
 };
 
 export const PRIMARY_NAVIGATION: NavigationItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid, fillIconWhenActive: true },
   { href: "/clients", label: "Clienti", icon: Users },
   {
     href: "/checkins",

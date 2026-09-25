@@ -2,7 +2,7 @@ import "server-only";
 import type { AuthenticatedContext } from "@/server/auth/session";
 import { NotFoundError, ValidationError } from "@/server/errors";
 import { logger } from "@/server/logger";
-import { findCheckin, listRecentCheckins, markCheckinReviewed } from "@/server/repositories/checkins";
+import { countPendingReview, findCheckin, listRecentCheckins, markCheckinReviewed } from "@/server/repositories/checkins";
 import type { CheckinItem, CheckinWithClient } from "@/types/domain";
 import { assertClientAccess } from "./access";
 
@@ -49,9 +49,16 @@ export async function reviewCheckin(
   logger.info("checkins.reviewed", { checkinId: checkin.id, withReply: input.reply !== undefined });
 }
 
-export async function listCheckinInbox(
-  context: AuthenticatedContext,
-  filter: "pending" | "all",
-): Promise<CheckinWithClient[]> {
-  return listRecentCheckins(context.db, { limit: INBOX_LIMIT, pendingReviewOnly: filter === "pending" });
+export type CheckinInbox = {
+  checkins: CheckinWithClient[];
+  /** Tutti i check-in da revisionare, anche oltre la finestra mostrata (stesso conteggio della sidebar). */
+  pendingCount: number;
+};
+
+export async function getCheckinInbox(context: AuthenticatedContext, filter: "pending" | "all"): Promise<CheckinInbox> {
+  const [checkins, pendingCount] = await Promise.all([
+    listRecentCheckins(context.db, { limit: INBOX_LIMIT, pendingReviewOnly: filter === "pending" }),
+    countPendingReview(context.db),
+  ]);
+  return { checkins, pendingCount };
 }

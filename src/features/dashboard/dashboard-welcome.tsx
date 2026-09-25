@@ -23,16 +23,17 @@ type DashboardWelcomeProps = {
   greeting: string;
   name: string;
   date: string;
-  /** id dell'intestazione della pagina: data e saluto atterrano sui suoi `data-slot="eyebrow"` e `data-slot="title"`. */
+  /** id dell'intestazione della pagina: il saluto atterra sul suo `data-slot="title"`. */
   targetId: string;
+  /** id della data nella barra superiore, dove atterra la data (su mobile non c'è: lì si dissolve). */
+  dateTargetId: string;
 };
 
-export function DashboardWelcome({ greeting, name, date, targetId }: DashboardWelcomeProps) {
+export function DashboardWelcome({ greeting, name, date, targetId, dateTargetId }: DashboardWelcomeProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const eyebrowRef = useRef<HTMLParagraphElement>(null);
   const titleRef = useRef<HTMLParagraphElement>(null);
-  const nameRef = useRef<HTMLSpanElement>(null);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -43,11 +44,10 @@ export function DashboardWelcome({ greeting, name, date, targetId }: DashboardWe
     const backdrop = backdropRef.current;
     const eyebrow = eyebrowRef.current;
     const title = titleRef.current;
-    const nameElement = nameRef.current;
     const header = document.getElementById(targetId);
-    const targetEyebrow = header?.querySelector<HTMLElement>('[data-slot="eyebrow"]');
     const targetTitle = header?.querySelector<HTMLElement>('[data-slot="title"]');
-    if (!root || !backdrop || !eyebrow || !title || !nameElement || !header || !targetEyebrow || !targetTitle) {
+    const targetDate = document.getElementById(dateTargetId);
+    if (!root || !backdrop || !eyebrow || !title || !header || !targetTitle) {
       setDone(true);
       return;
     }
@@ -63,7 +63,9 @@ export function DashboardWelcome({ greeting, name, date, targetId }: DashboardWe
     // Da qui il ritmo lo decide JavaScript: via la rete di sicurezza CSS.
     for (const animation of root.getAnimations()) animation.cancel();
 
-    const landingSpots = [targetEyebrow, targetTitle];
+    // La data vola sulla barra superiore solo se lì è visibile (desktop); altrimenti si dissolve.
+    const dateIsVisible = Boolean(targetDate && targetDate.getClientRects().length > 0);
+    const landingSpots = dateIsVisible && targetDate ? [targetDate, targetTitle] : [targetTitle];
     const animations: Animation[] = [];
     let revealTimer: number | undefined;
     let landingTimer: number | undefined;
@@ -76,9 +78,8 @@ export function DashboardWelcome({ greeting, name, date, targetId }: DashboardWe
       // Gli originali restano nascosti finché le copie grandi non ci atterrano sopra.
       for (const element of landingSpots) element.style.visibility = "hidden";
       animations.push(
-        flyTo(eyebrow, targetEyebrow),
+        dateIsVisible && targetDate ? flyTo(eyebrow, targetDate) : eyebrow.animate([{ opacity: 1 }, { opacity: 0 }], flightTiming()),
         flyTo(title, targetTitle),
-        nameElement.animate({ color: getComputedStyle(targetTitle).color }, flightTiming()),
         backdrop.animate([{ opacity: 1 }, { opacity: 0 }], {
           duration: BACKDROP_FADE_MS,
           delay: BACKDROP_FADE_DELAY_MS,
@@ -100,7 +101,7 @@ export function DashboardWelcome({ greeting, name, date, targetId }: DashboardWe
       for (const animation of animations) animation.cancel();
       showLandingSpots();
     };
-  }, [targetId]);
+  }, [targetId, dateTargetId]);
 
   if (done) return null;
 
@@ -112,7 +113,7 @@ export function DashboardWelcome({ greeting, name, date, targetId }: DashboardWe
           {date}
         </p>
         <p ref={titleRef} className="dashboard-welcome__title">
-          {greeting} <span ref={nameRef}>{name}</span>
+          {greeting} <span className="brand-gradient-text">{name}</span>
         </p>
       </div>
     </div>

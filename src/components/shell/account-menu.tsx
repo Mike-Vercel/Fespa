@@ -13,25 +13,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOutAction } from "@/features/auth/actions";
+import type { AIStatus } from "@/types/domain";
+import { AIStatusPill } from "./ai-status-pill";
 
 type AccountMenuProps = {
   fullName: string;
   email: string;
   roleLabel: string;
+  /** Stato dell'AI (attiva, demo, non configurata): dichiarato qui e accanto a ogni risultato AI. */
+  aiStatus: AIStatus;
 };
 
-export function AccountMenu({ fullName, email, roleLabel }: AccountMenuProps) {
+export function AccountMenu({ fullName, email, roleLabel, aiStatus }: AccountMenuProps) {
   const [isSigningOut, startSignOut] = useTransition();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={`Account di ${fullName}`}
-        className="flex h-10 items-center gap-2.5 rounded-md pl-1 pr-2 transition-colors hover:bg-hover data-[state=open]:bg-hover"
+        className="flex h-11 items-center gap-3 rounded-full pl-1 pr-1 transition-colors hover:bg-surface data-[state=open]:bg-surface md:pr-3"
       >
-        <Avatar name={fullName} size="sm" />
-        <span className="hidden max-w-40 truncate text-sm font-medium text-ink md:block">{fullName}</span>
-        <ChevronDown aria-hidden="true" className="hidden size-4 text-ink-3 md:block" strokeWidth={1.75} />
+        <Avatar name={fullName} size="sm" className="size-9 text-[13px]" />
+        <span className="hidden max-w-48 truncate text-[15px] font-medium text-ink md:block">{fullName}</span>
+        <ChevronDown aria-hidden="true" className="hidden size-4 text-ink-2 md:block" strokeWidth={1.75} />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
@@ -40,6 +44,7 @@ export function AccountMenu({ fullName, email, roleLabel }: AccountMenuProps) {
           <span className="block truncate text-xs text-ink-3">
             {email} · {roleLabel}
           </span>
+          <AIStatusPill status={aiStatus} className="mt-2.5 h-7" />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

@@ -34,7 +34,7 @@ export function Avatar({ name, size = "md", className }: { name: string; size?: 
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex shrink-0 select-none items-center justify-center rounded-full font-serif font-medium text-avatar-ink",
+        "inline-flex shrink-0 select-none items-center justify-center rounded-full font-sans font-semibold tracking-[0.02em] text-avatar-ink",
         toneOf(name),
         SIZES[size],
         className,

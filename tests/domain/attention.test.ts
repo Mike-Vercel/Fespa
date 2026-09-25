@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attentionReasonsFor, buildAttentionList, describeAttentionReason } from "@/domain/attention";
+import { attentionReasonsFor, attentionWaitingDays, buildAttentionList, describeAttentionReason } from "@/domain/attention";
 import type { ClientListItem } from "@/types/domain";
 
 const TIMEZONE = "Europe/Rome";
@@ -113,5 +113,23 @@ describe("describeAttentionReason", () => {
     expect(describeAttentionReason({ kind: "no_recent_checkin", daysSinceLastCheckin: 16 })).toBe(
       "Nessun check-in da 16 giorni",
     );
+  });
+});
+
+describe("attentionWaitingDays (badge \"N giorni\" in dashboard)", () => {
+  it("prende l'attesa più lunga tra i motivi", () => {
+    expect(
+      attentionWaitingDays({
+        reasons: [
+          { kind: "followup_overdue", daysOverdue: 1 },
+          { kind: "checkin_review_late", hoursWaiting: 75 },
+        ],
+      }),
+    ).toBe(3);
+  });
+
+  it("null se nessun motivo ha una durata", () => {
+    expect(attentionWaitingDays({ reasons: [{ kind: "followup_today" }, { kind: "checkin_to_review", count: 1 }] })).toBeNull();
+    expect(attentionWaitingDays({ reasons: [{ kind: "no_recent_checkin", daysSinceLastCheckin: null }] })).toBeNull();
   });
 });

@@ -11,6 +11,64 @@ export function isConcerningScore(key: CheckinScaleKey, value: number): boolean 
   return scale.higherIsBetter ? value <= CONCERNING_LOW : value >= CONCERNING_HIGH;
 }
 
+export type ScoreTone = "good" | "fair" | "concerning";
+
+/**
+ * Lettura del valore secondo il significato della scala, non del numero: per energia, sonno e
+ * alimentazione più alto è meglio, per lo stress è il contrario (5/5 di stress è un segnale negativo).
+ */
+export function scoreTone(key: CheckinScaleKey, value: number): ScoreTone {
+  if (isConcerningScore(key, value)) return "concerning";
+  return value === 3 ? "fair" : "good";
+}
+
+const TONE_PRESENTATION: Record<ScoreTone, { bar: string; label: string }> = {
+  good: { bar: "bg-kpi-green-ink", label: "buono" },
+  fair: { bar: "bg-kpi-orange-ink", label: "nella media" },
+  concerning: { bar: "bg-urgent", label: "da attenzionare" },
+};
+
+/** Ordine ed etichette brevi delle quattro scale nelle liste (l'etichetta intera resta nel tooltip). */
+const LIST_SCALES: Array<{ key: CheckinScaleKey; shortLabel: string }> = [
+  { key: "energy", shortLabel: "Energia" },
+  { key: "sleepQuality", shortLabel: "Sonno" },
+  { key: "nutritionAdherence", shortLabel: "Aliment." },
+  { key: "stress", shortLabel: "Stress" },
+];
+
+/**
+ * Le quattro scale del check-in: etichetta, valore /5 e una barra sottile.
+ * Il colore ripete il significato del valore, che resta sempre scritto (mai solo colore).
+ */
+export function CheckinScores({ answers }: { answers: CheckinAnswers }) {
+  return (
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 sm:gap-x-4">
+      {LIST_SCALES.map(({ key, shortLabel }) => {
+        const scale = CHECKIN_SCALES.find((item) => item.key === key);
+        const value = answers[key];
+        const tone = TONE_PRESENTATION[scoreTone(key, value)];
+        return (
+          <div key={key} title={`${scale?.description ?? shortLabel}: ${value} su ${CHECKIN_SCALE_MAX} (${tone.label})`} className="min-w-0 sm:w-14">
+            <dt className="truncate text-[13px] leading-tight text-ink-2">
+              <span aria-hidden="true">{shortLabel}</span>
+              <span className="sr-only">{scale?.label ?? shortLabel}</span>
+            </dt>
+            <dd className="mt-1">
+              <span className="tabular text-[14px] font-medium leading-none text-ink">
+                {value}/{CHECKIN_SCALE_MAX}
+              </span>
+              <span className="sr-only"> ({tone.label})</span>
+              <span aria-hidden="true" className="mt-1.5 block h-[3px] w-full max-w-14 overflow-hidden rounded-full bg-line/80">
+                <span className={cn("block h-full rounded-full", tone.bar)} style={{ width: `${(value / CHECKIN_SCALE_MAX) * 100}%` }} />
+              </span>
+            </dd>
+          </div>
+        );
+      })}
+    </dl>
+  );
+}
+
 /** Punteggio 1–5 come piccola barra a segmenti, con valore testuale per l'accessibilità. */
 export function ScoreMeter({
   scaleKey,

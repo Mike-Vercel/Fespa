@@ -48,9 +48,34 @@
   --color-avatar-4: #e2dfda;
   --color-avatar-ink: #57534c;
 
-  /* Bianco e nero pieni: sidebar e barra della home (bianco), barra superiore dell'app (nero). */
+  /* Bianco e nero pieni: sidebar e barra della home. */
   --color-white: #ffffff;
   --color-black: #0c0b0a;
+
+  /*
+   * Accenti del marchio FESPA (viola/blu): solo accenti — voce attiva, contatori, nome nel saluto.
+   * Il verde resta il colore degli esiti positivi. Contrasti su bianco: brand 5.6:1, urgent 5.7:1.
+   */
+  --color-brand: #5156d8;
+  --color-brand-violet: #7c5cf2;
+  --color-brand-soft: #eef0fc;
+  --color-urgent: #d6453a;
+  --color-urgent-soft: #fdeae7;
+  --color-warning: #a8531a;
+  --color-warning-soft: #fdeee1;
+  /* Informativo (es. percorso concluso): 5.1:1 sul suo fondo. */
+  --color-info: #3a5bc7;
+  --color-info-soft: #e8eefd;
+
+  /* KPI della dashboard: fondo tenue dell'icona e colore della linea di andamento. */
+  --color-kpi-green: #e6f3e8;
+  --color-kpi-green-ink: #3f8d57;
+  --color-kpi-blue: #e8eefd;
+  --color-kpi-blue-ink: #4a6ee0;
+  --color-kpi-orange: #fdeee1;
+  --color-kpi-orange-ink: #d9772b;
+  --color-kpi-violet: #f0eafd;
+  --color-kpi-violet-ink: #8a5cf0;
 
   --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
@@ -217,7 +242,7 @@
     position: absolute;
     inset: 12% 8%;
     border-radius: 999px;
-    background: radial-gradient(closest-side, rgb(230 236 226 / 0.95), rgb(225 238 240 / 0.45) 55%, transparent);
+    background: radial-gradient(closest-side, rgb(240 234 253 / 0.95), rgb(232 238 253 / 0.5) 55%, transparent);
     filter: blur(24px);
     animation: dashboard-welcome-glow 1.2s var(--ease-soft) both;
   }
@@ -237,26 +262,22 @@
     white-space: nowrap;
   }
 
+  /* Stessi caratteri della data nella barra superiore, dove atterra. */
   .dashboard-welcome__eyebrow {
-    color: var(--color-accent-strong);
-    font-size: clamp(0.8125rem, 1.6vw, 1rem);
+    color: var(--color-ink-2);
+    font-size: clamp(0.9375rem, 1.8vw, 1.25rem);
     font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
     animation: dashboard-welcome-rise 700ms var(--ease-soft) 80ms both;
   }
 
+  /* Stessi caratteri del saluto della dashboard (DashboardHeader), dove atterra. */
   .dashboard-welcome__title {
     color: var(--color-ink);
     font-family: var(--font-serif);
-    font-size: clamp(2.25rem, 9vw, 6.5rem);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
+    font-size: clamp(2.5rem, 9vw, 7rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
     animation: dashboard-welcome-rise 800ms var(--ease-soft) 160ms both;
-  }
-
-  .dashboard-welcome__title span {
-    color: var(--color-accent-strong);
   }
 
   .dashboard-reveal {
@@ -580,12 +601,85 @@
   background-color: var(--color-paper);
 }
 
-/* Barra superiore dell'app: tema scuro, ma su nero pieno invece del grigio caldo del tema. */
+/*
+ * Barra superiore dell'app: chiara e trasparente in cima alla pagina (sulla dashboard lascia vedere
+ * lo sfondo), diventa piena scorrendo. Dove lo scroll non pilota le animazioni resta semitrasparente.
+ */
 .app-topbar {
-  --color-paper: #0c0b0a;
-  --color-surface: #1a1816;
-  --color-hover: #262320;
-  --color-line: #2a2724;
+  background-color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+@supports (animation-timeline: scroll()) {
+  .app-topbar {
+    background-color: transparent;
+    border-color: transparent;
+    backdrop-filter: none;
+    animation: app-topbar-solid linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 72px;
+  }
+}
+
+@keyframes app-topbar-solid {
+  to {
+    background-color: color-mix(in srgb, var(--color-paper) 88%, transparent);
+    border-color: var(--color-line);
+    backdrop-filter: blur(12px);
+  }
+}
+
+/*
+ * Sfondo atmosferico delle pagine principali (PageAtmosphere): dietro barra superiore e intestazione.
+ * La maschera lo dissolve verso sinistra (titolo leggibile) e verso il basso (nel color carta).
+ * Variante "soft" (Clienti): più bassa e desaturata, finisce prima dell'elenco.
+ */
+.page-atmosphere {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: -1;
+  height: 560px;
+  pointer-events: none;
+  background-image: url("/images/dashboard/sfondo_dashboard.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 62% 38%;
+  mask-image:
+    linear-gradient(to bottom, #000 38%, transparent 96%),
+    linear-gradient(to right, transparent 18%, #000 62%);
+  mask-composite: intersect;
+}
+
+.page-atmosphere--soft {
+  height: 380px;
+  background-position: 64% 42%;
+  filter: saturate(0.8);
+  opacity: 0.85;
+  mask-image:
+    linear-gradient(to bottom, #000 30%, transparent 92%),
+    linear-gradient(to right, transparent 22%, #000 66%);
+}
+
+@media (max-width: 1023px) {
+  .page-atmosphere {
+    height: 420px;
+    background-position: 72% 30%;
+    mask-image:
+      linear-gradient(to bottom, #000 30%, transparent 92%),
+      linear-gradient(to right, transparent 0%, #000 70%);
+  }
+
+  .page-atmosphere--soft {
+    height: 300px;
+  }
+}
+
+/* Nome nel saluto: sfumatura viola → blu del marchio. */
+.brand-gradient-text {
+  background-image: linear-gradient(100deg, var(--color-brand-violet) 0%, var(--color-brand) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /*

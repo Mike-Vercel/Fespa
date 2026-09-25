@@ -3,7 +3,7 @@ import { cn } from "@/lib/cn";
 import { Spinner } from "./spinner";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "ai" | "danger";
-export type ButtonSize = "sm" | "md" | "icon";
+export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const BASE =
   "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-55 select-none";
@@ -19,6 +19,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
 const SIZES: Record<ButtonSize, string> = {
   sm: "h-9 px-3 text-[13px]",
   md: "h-10 px-4 text-sm",
+  lg: "h-12 rounded-xl px-5 text-[15px]",
   icon: "size-10",
 };
 

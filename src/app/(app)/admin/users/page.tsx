@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageAtmosphere } from "@/components/shell/page-atmosphere";
 import { PageHeader } from "@/components/shell/page-header";
 import { UserDirectory } from "@/features/admin/user-directory";
 import { pluralize } from "@/lib/format";
@@ -16,27 +17,31 @@ export default async function UsersPage() {
   const timezone = getServerEnv().APP_TIMEZONE;
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-7 animate-rise-in">
-      <PageHeader
-        eyebrow="Amministrazione"
-        title="Utenti registrati"
-        description={
-          <>
-            {pluralize(total, "account", "account")}. Ogni nuovo account nasce come cliente.{" "}
-            {canManageRoles
-              ? "Da qui scegli chi è coach, amministrazione o super admin."
-              : "Solo un super admin può cambiare i ruoli."}
-          </>
-        }
-      />
+    <>
+      <PageAtmosphere variant="soft" />
+      <div className="flex flex-col gap-7 animate-rise-in">
+        <PageHeader
+          variant="display"
+          eyebrow="Amministrazione"
+          title="Utenti registrati"
+          description={
+            <>
+              {pluralize(total, "account", "account")}. Ogni nuovo account nasce come cliente.{" "}
+              {canManageRoles
+                ? "Da qui scegli chi è coach, amministrazione o super admin."
+                : "Solo un super admin può cambiare i ruoli."}
+            </>
+          }
+        />
 
-      <UserDirectory
-        groups={groups}
-        canManageRoles={canManageRoles}
-        currentUserId={currentUserId}
-        now={now}
-        timezone={timezone}
-      />
-    </div>
+        <UserDirectory
+          groups={groups}
+          canManageRoles={canManageRoles}
+          currentUserId={currentUserId}
+          now={now}
+          timezone={timezone}
+        />
+      </div>
+    </>
   );
 }

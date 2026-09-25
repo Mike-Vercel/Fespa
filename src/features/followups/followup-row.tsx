@@ -14,13 +14,16 @@ type FollowupRowProps = {
   action?: ReactNode;
 };
 
-function dueLabel(followup: FollowupItem, today: string): { text: string; isOverdue: boolean } {
+function dueLabel(followup: FollowupItem, today: string): { text: string; tone: string } {
   if (followup.status !== "pending") {
-    return { text: `Scadenza ${formatRelativeDay(followup.dueOn, today)}`, isOverdue: false };
+    return { text: `Scadenza ${formatRelativeDay(followup.dueOn, today)}`, tone: "text-ink-3" };
   }
-  const isOverdue = dueBucketOf(followup.dueOn, today) === "overdue";
+  const bucket = dueBucketOf(followup.dueOn, today);
   const relative = formatRelativeDay(followup.dueOn, today);
-  return { text: isOverdue ? `Scaduto · ${relative}` : capitalize(relative), isOverdue };
+  if (bucket === "overdue") {
+    return { text: `Scaduto · ${relative}`, tone: "font-medium text-urgent" };
+  }
+  return { text: capitalize(relative), tone: bucket === "today" ? "font-medium text-kpi-blue-ink" : "text-ink-3" };
 }
 
 export function FollowupRow({ followup, today, showClient = true, action }: FollowupRowProps) {
@@ -54,9 +57,7 @@ export function FollowupRow({ followup, today, showClient = true, action }: Foll
           <p className="mt-1 line-clamp-2 text-[13px] text-pretty text-ink-2">{followup.description}</p>
         ) : null}
       </div>
-      <span className={cn("shrink-0 pt-0.5 text-[13px]", due.isOverdue ? "font-medium text-rust" : "text-ink-3")}>
-        {due.text}
-      </span>
+      <span className={cn("shrink-0 pt-0.5 text-[13px]", due.tone)}>{due.text}</span>
     </div>
   );
 }

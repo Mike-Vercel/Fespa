@@ -156,7 +156,7 @@ export function CopilotSheet({ client, today, timezone, aiStatus }: CopilotSheet
               maxLength={COPILOT_QUESTION_MAX_LENGTH}
               disabled={!isAIAvailable}
               placeholder={`Chiedi qualcosa su ${client.firstName}…`}
-              className="min-h-11 flex-1 resize-none rounded-md border border-control bg-surface px-3 py-2.5 text-[15px] text-ink placeholder:text-ink-3 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent disabled:opacity-60"
+              className="min-h-11 flex-1 resize-none rounded-md border border-control bg-surface px-3 py-2.5 text-base sm:text-[15px] text-ink placeholder:text-ink-3 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent disabled:opacity-60"
             />
             <Button type="submit" variant="primary" size="icon" disabled={!canSend} aria-label="Invia domanda">
               <ArrowUp aria-hidden="true" className="size-4" strokeWidth={2} />

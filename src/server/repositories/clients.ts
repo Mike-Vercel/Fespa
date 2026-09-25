@@ -18,10 +18,20 @@ const OVERVIEW_COLUMNS =
 /**
  * I caratteri jolly di LIKE (e "*" di PostgREST) nel testo cercato vengono rimossi:
  * la ricerca deve essere sempre "contiene questo testo", mai un pattern scelto dall'utente.
+ * Anche virgole, parentesi e virgolette: nel filtro `or` di PostgREST hanno un significato.
  */
 function toContainsPattern(search: string): string {
-  const literal = search.replace(/[%_*\\,()]/g, " ").trim();
+  const literal = search.replace(/[%_*\\,()"]/g, " ").trim();
   return `%${literal}%`;
+}
+
+/** Il telefono non è nella vista delle clienti: si cercano prima gli id nella scheda (sempre sotto RLS). */
+async function findClientIdsByPhone(db: AppSupabaseClient, pattern: string): Promise<string[]> {
+  const { data, error } = await db.from("clients").select("id").ilike("phone", pattern).limit(MAX_CLIENTS);
+  if (error) {
+    throw new DataAccessError("clients.findIdsByPhone", error);
+  }
+  return data.map((row) => row.id);
 }
 
 function toClientListItem(row: ViewRow<"client_overview">): ClientListItem | null {
@@ -53,7 +63,10 @@ function toClientListItems(rows: ViewRow<"client_overview">[]): ClientListItem[]
   return rows.map(toClientListItem).filter((item): item is ClientListItem => item !== null);
 }
 
-/** Clienti operative (approvate). Le iscrizioni in attesa compaiono solo nell'area admin. */
+/**
+ * Clienti operative (approvate). Le iscrizioni in attesa compaiono solo nell'area admin.
+ * `search` cerca in nome, email e telefono.
+ */
 export async function listClientOverviews(db: AppSupabaseClient, search = ""): Promise<ClientListItem[]> {
   let query = db
     .from("client_overview")
@@ -62,7 +75,13 @@ export async function listClientOverviews(db: AppSupabaseClient, search = ""): P
     .order("full_name")
     .limit(MAX_CLIENTS);
   if (search.trim()) {
-    query = query.ilike("full_name", toContainsPattern(search));
+    const pattern = toContainsPattern(search);
+    const phoneMatches = await findClientIdsByPhone(db, pattern);
+    const conditions = [`full_name.ilike.${pattern}`, `email.ilike.${pattern}`];
+    if (phoneMatches.length > 0) {
+      conditions.push(`id.in.(${phoneMatches.join(",")})`);
+    }
+    query = query.or(conditions.join(","));
   }
 
   const { data, error } = await query;

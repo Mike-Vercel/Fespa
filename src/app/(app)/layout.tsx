@@ -32,10 +32,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <div className="flex min-h-dvh">
         <AppSidebar collapsedPreference={sidebarCollapsed} counts={counts} showAdmin={isAdminRole(context.coach.role)} />
 
-        <div className="flex min-w-0 flex-1 flex-col">
+        {/* relative + isolate: lo sfondo atmosferico della dashboard si posiziona qui, dietro barra e contenuto. */}
+        <div className="relative isolate flex min-w-0 flex-1 flex-col">
           <Topbar coach={context.coach} today={today} aiStatus={getAIStatus()} counts={counts} />
-          <main id="main" tabIndex={-1} className="flex-1 px-4 pb-20 pt-6 focus:outline-none sm:px-6 lg:px-10 lg:pt-10">
-            <div className="mx-auto w-full max-w-[1200px]">{children}</div>
+          <main id="main" tabIndex={-1} className="flex-1 px-4 pb-20 pt-6 focus:outline-none sm:px-6 lg:pl-14 lg:pr-8 lg:pt-8">
+            <div className="mx-auto w-full max-w-[1600px]">{children}</div>
           </main>
         </div>
       </div>

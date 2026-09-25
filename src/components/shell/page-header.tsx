@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
+/** Titolo editoriale grande delle pagine principali (Dashboard, Clienti). */
+export const DISPLAY_TITLE_CLASSES =
+  "font-serif text-[42px] leading-[1.05] tracking-[-0.025em] text-ink sm:text-[54px] 2xl:text-[60px]";
+
 type PageHeaderProps = {
   eyebrow?: ReactNode;
   title: ReactNode;
@@ -8,25 +12,37 @@ type PageHeaderProps = {
   actions?: ReactNode;
   className?: string;
   id?: string;
+  /** "display": titolo grande e descrizione più ampia, per le pagine principali. */
+  variant?: "default" | "display";
 };
 
-export function PageHeader({ eyebrow, title, description, actions, className, id }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, description, actions, className, id, variant = "default" }: PageHeaderProps) {
+  const isDisplay = variant === "display";
   return (
     <header id={id} className={cn("flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between", className)}>
       <div className="min-w-0">
         {eyebrow ? (
-          <p data-slot="eyebrow" className="text-xs font-medium uppercase tracking-[0.14em] text-ink-3">
+          <p data-slot="eyebrow" className={cn("text-xs font-medium uppercase tracking-[0.14em] text-ink-3", isDisplay && "mb-2")}>
             {eyebrow}
           </p>
         ) : null}
         <h1
           data-slot="title"
-          className="mt-1.5 font-serif text-[30px] leading-[1.15] tracking-[-0.01em] text-ink text-balance sm:text-[36px]"
+          className={cn(
+            "text-balance",
+            isDisplay ? DISPLAY_TITLE_CLASSES : "mt-1.5 font-serif text-[30px] leading-[1.15] tracking-[-0.01em] text-ink sm:text-[36px]",
+          )}
         >
           {title}
         </h1>
         {description ? (
-          <div data-slot="description" className="mt-2 max-w-2xl text-[15px] text-pretty text-ink-2">
+          <div
+            data-slot="description"
+            className={cn(
+              isDisplay ? "max-w-[45rem] text-pretty text-ink-2" : "max-w-2xl text-pretty text-ink-2",
+              isDisplay ? "mt-2.5 text-[16px] leading-relaxed sm:text-[17px]" : "mt-2 text-[15px]",
+            )}
+          >
             {description}
           </div>
         ) : null}

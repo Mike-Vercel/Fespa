@@ -113,6 +113,26 @@ export function buildAttentionList(clients: ClientListItem[], context: Attention
   );
 }
 
+/**
+ * Da quanti giorni aspetta la cosa più vecchia tra i motivi (follow-up scaduto, check-in in attesa,
+ * nessun check-in recente): il numero del badge "3 giorni". Null se nessun motivo ha una durata.
+ */
+export function attentionWaitingDays(item: Pick<AttentionItem, "reasons">): number | null {
+  const days = item.reasons.flatMap((reason) => {
+    switch (reason.kind) {
+      case "followup_overdue":
+        return [reason.daysOverdue];
+      case "checkin_review_late":
+        return [Math.floor(reason.hoursWaiting / 24)];
+      case "no_recent_checkin":
+        return reason.daysSinceLastCheckin === null ? [] : [reason.daysSinceLastCheckin];
+      default:
+        return [];
+    }
+  });
+  return days.length > 0 ? Math.max(...days) : null;
+}
+
 /** Testo breve e leggibile per ogni motivo, mostrato nella dashboard. */
 export function describeAttentionReason(reason: AttentionReason): string {
   switch (reason.kind) {

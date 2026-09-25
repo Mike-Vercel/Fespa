@@ -19,12 +19,26 @@ export function LogoMark({ className }: { className?: string }) {
   );
 }
 
+const WORDMARK_SIZES = {
+  md: { name: "text-[11px] tracking-[0.18em]", subtitle: "mt-1 text-[15px]" },
+  lg: { name: "text-[15px] tracking-[0.14em]", subtitle: "mt-1 text-[19px]" },
+} as const;
+
 /** `subtitle` distingue il contesto: l'app ("Coach AI") o il sito pubblico. */
-export function Wordmark({ className, subtitle = "Coach AI" }: { className?: string; subtitle?: string }) {
+export function Wordmark({
+  className,
+  subtitle = "Coach AI",
+  size = "md",
+}: {
+  className?: string;
+  subtitle?: string;
+  size?: keyof typeof WORDMARK_SIZES;
+}) {
+  const sizes = WORDMARK_SIZES[size];
   return (
     <span className={cn("flex min-w-0 flex-col leading-none", className)}>
-      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink">FESPA</span>
-      <span className="mt-1 font-serif text-[15px] italic text-ink-2">{subtitle}</span>
+      <span className={cn("font-semibold uppercase text-ink", sizes.name)}>FESPA</span>
+      <span className={cn("font-serif italic text-ink-2", sizes.subtitle)}>{subtitle}</span>
     </span>
   );
 }

@@ -45,8 +45,8 @@ export function NewClientDialog({ today }: { today: string }) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="primary" icon={<UserPlus aria-hidden="true" className="size-4" strokeWidth={2} />}>
-          Nuova cliente
+        <Button variant="primary" size="lg" icon={<UserPlus aria-hidden="true" className="size-[18px]" strokeWidth={1.9} />}>
+          Nuovo cliente
         </Button>
       </DialogTrigger>
       <DialogContent

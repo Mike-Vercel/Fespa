@@ -2,12 +2,14 @@ import type { ComponentProps, ReactNode, SelectHTMLAttributes, TextareaHTMLAttri
 import { cn } from "@/lib/cn";
 
 /*
+ * Testo dei campi a 16px su mobile: sotto quella misura iPhone ingrandisce la pagina quando si tocca un campo.
+ *
  * Campi di form accessibili: label sempre visibile, errore collegato con aria-describedby,
  * aria-invalid quando serve. Select e date sono nativi: accessibili e ottimi su mobile.
  */
 
 const CONTROL =
-  "w-full rounded-md border border-control bg-surface px-3 text-[15px] text-ink transition-colors placeholder:text-ink-3 hover:border-ink-3 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent disabled:opacity-60 aria-invalid:border-rust";
+  "w-full rounded-md border border-control bg-surface px-3 text-base text-ink transition-colors sm:text-[15px] placeholder:text-ink-3 hover:border-ink-3 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent disabled:opacity-60 aria-invalid:border-rust";
 
 type FieldProps = {
   id: string;

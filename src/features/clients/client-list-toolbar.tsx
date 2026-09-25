@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { Select } from "@/components/ui/form-fields";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/cn";
-import { CLIENT_SORTS, CLIENT_STATUS_FILTERS, type ClientListQuery, type ClientSort, type ClientStatusFilter } from "@/validation/clients";
+import { CLIENT_SORTS, type ClientListQuery, type ClientSort, type ClientStatusFilter } from "@/validation/clients";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -24,6 +24,9 @@ const SORT_LABELS: Record<ClientSort, string> = {
   last_checkin: "Ultimo check-in",
   next_followup: "Prossimo follow-up",
 };
+
+/** Ordine dei filtri: il ciclo di vita del percorso, dopo "Tutte". */
+const STATUS_FILTER_ORDER: ClientStatusFilter[] = ["all", "onboarding", "active", "paused", "completed"];
 
 const DEFAULTS: ClientListQuery = { q: "", status: "all", sort: "priority" };
 
@@ -75,20 +78,20 @@ export function ClientListToolbar({ query }: { query: ClientListQuery }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-      <div className="relative lg:w-80">
+    <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-5 lg:gap-y-3">
+      <div className="relative lg:w-[21rem] lg:shrink-0">
         <label htmlFor="client-search" className="sr-only">
-          Cerca una cliente per nome
+          Cerca una cliente per nome, email o telefono
         </label>
-        <Search aria-hidden="true" strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" />
+        <Search aria-hidden="true" strokeWidth={1.75} className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-3" />
         <input
           id="client-search"
           type="search"
           value={searchText}
           onChange={(event) => handleSearchChange(event.target.value)}
-          placeholder="Cerca per nome"
+          placeholder="Cerca per nome, email o telefono..."
           autoComplete="off"
-          className="h-10 w-full rounded-md border border-control bg-surface pl-9 pr-9 text-[15px] text-ink placeholder:text-ink-3 shadow-sm hover:border-ink-3 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent"
+          className="h-10 w-full rounded-lg border border-line-strong/80 bg-surface pl-10 pr-9 text-base text-ink sm:text-[15px] shadow-[0_1px_2px_rgb(31_29_26/0.03)] transition-colors placeholder:text-ink-3 hover:border-control focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent [&::-webkit-search-cancel-button]:hidden"
         />
         {isPending ? (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3" aria-hidden="true">
@@ -97,17 +100,19 @@ export function ClientListToolbar({ query }: { query: ClientListQuery }) {
         ) : null}
       </div>
 
-      <fieldset className="min-w-0">
+      <fieldset className="min-w-0 lg:shrink-0">
         <legend className="sr-only">Filtra per stato</legend>
-        <div className="-mx-4 flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
-          {CLIENT_STATUS_FILTERS.map((status) => {
+        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none] sm:mx-0 sm:px-0">
+          {STATUS_FILTER_ORDER.map((status) => {
             const isSelected = query.status === status;
             return (
               <label
                 key={status}
                 className={cn(
-                  "inline-flex h-9 shrink-0 cursor-pointer items-center rounded-full px-3.5 text-[13px] font-medium transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
-                  isSelected ? "bg-accent text-on-ink shadow-sm" : "text-ink-2 ring-1 ring-inset ring-line hover:bg-hover hover:text-ink",
+                  "relative inline-flex h-10 shrink-0 cursor-pointer items-center rounded-full px-4 text-[14px] font-medium transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
+                  isSelected
+                    ? "bg-accent-strong text-white shadow-[0_2px_6px_-2px_rgb(60_86_56/0.45)]"
+                    : "bg-sunken text-ink ring-1 ring-inset ring-line/70 hover:bg-hover",
                 )}
               >
                 <input
@@ -125,8 +130,8 @@ export function ClientListToolbar({ query }: { query: ClientListQuery }) {
         </div>
       </fieldset>
 
-      <div className="flex items-center gap-2 lg:ml-auto">
-        <label htmlFor="client-sort" className="shrink-0 text-[13px] text-ink-3">
+      <div className="flex items-center gap-3 lg:ml-auto">
+        <label htmlFor="client-sort" className="shrink-0 text-[14px] text-ink-3">
           Ordina per
         </label>
         <Select
@@ -136,7 +141,7 @@ export function ClientListToolbar({ query }: { query: ClientListQuery }) {
             const sort = CLIENT_SORTS.find((option) => option === event.target.value);
             if (sort) navigate({ sort });
           }}
-          className="h-9 w-auto text-sm"
+          className="h-10 w-full rounded-lg border-line-strong/80 text-base sm:w-44 sm:text-[15px]"
         >
           {CLIENT_SORTS.map((sort) => (
             <option key={sort} value={sort}>
