@@ -10,10 +10,11 @@ import {
   findFollowup,
   insertFollowup,
   listFollowupsByStatus,
+  updateFollowupDetails,
   updateFollowupStatus,
 } from "@/server/repositories/followups";
 import type { FollowupItem, FollowupStatus } from "@/types/domain";
-import { FOLLOWUP_MAX_DAYS_AHEAD, type CreateFollowupInput } from "@/validation/followups";
+import { FOLLOWUP_MAX_DAYS_AHEAD, type CreateFollowupInput, type UpdateFollowupInput } from "@/validation/followups";
 import { assertClientAccess } from "./access";
 
 const FOLLOWUP_NOT_FOUND_MESSAGE = "Follow-up non trovato o non accessibile.";
@@ -85,16 +86,44 @@ export async function createFollowup(context: AuthenticatedContext, input: Creat
   return followupId;
 }
 
-export async function changeFollowupStatus(
-  context: AuthenticatedContext,
-  followupId: string,
-  status: FollowupStatus,
-): Promise<void> {
+/** Accesso verificato alla cliente del follow-up: stesso messaggio per "non esiste" e "non accessibile". */
+export async function getAccessibleFollowup(context: AuthenticatedContext, followupId: string): Promise<FollowupItem> {
   const followup = await findFollowup(context.db, followupId);
   if (!followup) {
     throw new NotFoundError(FOLLOWUP_NOT_FOUND_MESSAGE);
   }
   await assertClientAccess(context, followup.clientId);
+  return followup;
+}
+
+/** Modifica titolo, descrizione e scadenza di un follow-up ancora in attesa. */
+export async function updateFollowup(context: AuthenticatedContext, input: UpdateFollowupInput): Promise<void> {
+  const followup = await getAccessibleFollowup(context, input.followupId);
+  if (followup.status !== "pending") {
+    throw new ValidationError({}, "Si possono modificare solo i follow-up ancora da fare.");
+  }
+  // La scadenza si controlla solo se cambia: un follow-up già scaduto resta modificabile nel testo.
+  if (input.dueOn !== followup.dueOn) {
+    assertDueDateInWindow(input.dueOn, calendarDateIn(getServerEnv().APP_TIMEZONE));
+  }
+
+  const updated = await updateFollowupDetails(context.db, followup.id, {
+    title: input.title,
+    description: input.description,
+    dueOn: input.dueOn,
+  });
+  if (!updated) {
+    throw new NotFoundError(FOLLOWUP_NOT_FOUND_MESSAGE);
+  }
+  logger.info("followups.updated", { followupId: followup.id });
+}
+
+export async function changeFollowupStatus(
+  context: AuthenticatedContext,
+  followupId: string,
+  status: FollowupStatus,
+): Promise<void> {
+  await getAccessibleFollowup(context, followupId);
 
   const updated = await updateFollowupStatus(context.db, followupId, status);
   if (!updated) {

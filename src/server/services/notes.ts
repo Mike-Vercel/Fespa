@@ -2,7 +2,8 @@ import "server-only";
 import type { AuthenticatedContext } from "@/server/auth/session";
 import { ForbiddenError, NotFoundError } from "@/server/errors";
 import { logger } from "@/server/logger";
-import { deleteNote, findNoteOwnership, insertNote, updateNoteContent } from "@/server/repositories/notes";
+import { deleteNote, findNote, findNoteOwnership, insertNote, updateNoteContent } from "@/server/repositories/notes";
+import type { NoteItem } from "@/types/domain";
 import { assertClientAccess } from "./access";
 
 const NOTE_NOT_FOUND_MESSAGE = "Nota non trovata o non accessibile.";
@@ -27,6 +28,16 @@ async function assertNoteOwnedByCoach(context: AuthenticatedContext, noteId: str
   if (ownership.coachId !== context.coach.id) {
     throw new ForbiddenError("Puoi modificare o eliminare solo le note scritte da te.");
   }
+}
+
+/** Nota letta con accesso verificato alla sua cliente (visibile a chi segue la cliente). */
+export async function getAccessibleNote(context: AuthenticatedContext, noteId: string): Promise<NoteItem> {
+  const note = await findNote(context.db, noteId, context.coach.id);
+  if (!note) {
+    throw new NotFoundError(NOTE_NOT_FOUND_MESSAGE);
+  }
+  await assertClientAccess(context, note.clientId);
+  return note;
 }
 
 export async function updateNote(context: AuthenticatedContext, input: { noteId: string; content: string }) {

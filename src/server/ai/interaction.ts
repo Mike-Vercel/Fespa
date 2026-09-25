@@ -19,18 +19,17 @@ type InteractionMeta = {
   provider: AIProviderInfo;
 };
 
+export type AIInteractionHandle = {
+  succeed(usage: AIUsage): Promise<void>;
+  fail(error: unknown): Promise<void>;
+};
+
 /**
- * Involucro comune a tutte le richieste AI:
- *  1. registra la richiesta (audit: solo metadati, nessun contenuto);
- *  2. applica il rate limit per utente;
- *  3. esegue l'operazione misurando latenza e token;
- *  4. registra l'esito (anche in caso di errore) e lo logga.
+ * Prima metà dell'involucro: registra la richiesta (audit: solo metadati) e applica il rate limit.
+ * Separata dall'esecuzione per le risposte in streaming, che devono essere rifiutate
+ * PRIMA di aprire lo stream o creare messaggi.
  */
-export async function runAIInteraction<TValue>(
-  requester: AIRequester,
-  meta: InteractionMeta,
-  operation: () => Promise<{ value: TValue; usage: AIUsage }>,
-): Promise<TValue> {
+export async function beginAIInteraction(requester: AIRequester, meta: InteractionMeta): Promise<AIInteractionHandle> {
   const { db, userId } = requester;
   const startedAt = Date.now();
   const logFields = { requestType: meta.requestType, provider: meta.provider.provider, model: meta.provider.model };
@@ -51,26 +50,49 @@ export async function runAIInteraction<TValue>(
     throw new RateLimitError(decision.retryAfterSeconds);
   }
 
+  return {
+    async succeed(usage) {
+      const latencyMs = Date.now() - startedAt;
+      await finishInteraction(db, interactionId, {
+        status: "succeeded",
+        latencyMs,
+        inputTokens: usage.inputTokens ?? undefined,
+        outputTokens: usage.outputTokens ?? undefined,
+      });
+      logger.info("ai.request_succeeded", { ...logFields, latencyMs, ...usage });
+    },
+    async fail(error) {
+      const errorCode = error instanceof AppError ? error.code : "UNEXPECTED";
+      try {
+        await finishInteraction(db, interactionId, { status: "failed", latencyMs: Date.now() - startedAt, errorCode });
+      } catch (auditError) {
+        // L'errore originale resta quello da mostrare: il fallimento dell'audit finisce solo nei log.
+        logger.error("ai.audit_failed", { ...logFields, error: auditError });
+      }
+      logger.error("ai.request_failed", { ...logFields, errorCode, error });
+    },
+  };
+}
+
+/**
+ * Involucro comune a tutte le richieste AI:
+ *  1. registra la richiesta (audit: solo metadati, nessun contenuto);
+ *  2. applica il rate limit per utente;
+ *  3. esegue l'operazione misurando latenza e token;
+ *  4. registra l'esito (anche in caso di errore) e lo logga.
+ */
+export async function runAIInteraction<TValue>(
+  requester: AIRequester,
+  meta: InteractionMeta,
+  operation: () => Promise<{ value: TValue; usage: AIUsage }>,
+): Promise<TValue> {
+  const interaction = await beginAIInteraction(requester, meta);
   try {
     const { value, usage } = await operation();
-    const latencyMs = Date.now() - startedAt;
-    await finishInteraction(db, interactionId, {
-      status: "succeeded",
-      latencyMs,
-      inputTokens: usage.inputTokens ?? undefined,
-      outputTokens: usage.outputTokens ?? undefined,
-    });
-    logger.info("ai.request_succeeded", { ...logFields, latencyMs, ...usage });
+    await interaction.succeed(usage);
     return value;
   } catch (error) {
-    const errorCode = error instanceof AppError ? error.code : "UNEXPECTED";
-    try {
-      await finishInteraction(db, interactionId, { status: "failed", latencyMs: Date.now() - startedAt, errorCode });
-    } catch (auditError) {
-      // L'errore originale resta quello da mostrare: il fallimento dell'audit finisce solo nei log.
-      logger.error("ai.audit_failed", { ...logFields, error: auditError });
-    }
-    logger.error("ai.request_failed", { ...logFields, errorCode, error });
+    await interaction.fail(error);
     throw error;
   }
 }

@@ -155,3 +155,20 @@ export async function updateFollowupStatus(
   }
   return data.length > 0;
 }
+
+/** Titolo, descrizione e scadenza di un follow-up (cliente e autrice non cambiano mai). */
+export async function updateFollowupDetails(
+  db: AppSupabaseClient,
+  followupId: string,
+  changes: { title: string; description: string | null; dueOn: string },
+): Promise<boolean> {
+  const { data, error } = await db
+    .from("followups")
+    .update({ title: changes.title, description: changes.description, due_on: changes.dueOn })
+    .eq("id", followupId)
+    .select("id");
+  if (error) {
+    throw new DataAccessError("followups.updateDetails", error);
+  }
+  return data.length > 0;
+}

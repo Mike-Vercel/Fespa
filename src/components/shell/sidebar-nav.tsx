@@ -32,10 +32,16 @@ export function SidebarNav({ items, collapsed, counts, onNavigate }: SidebarNavP
                 onClick={onNavigate}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "group relative flex h-11 items-center gap-3.5 rounded-xl px-3.5 text-[15px] transition-colors",
-                  // Voce attiva: velatura viola/blu del marchio e tacca verticale sul bordo della sidebar.
+                  "group relative flex h-11 items-center rounded-xl text-[15px] transition-colors",
+                  // Compressa: quadrato 44×44 con l'icona al centro (niente padding che la sposti).
+                  collapsed ? "w-11 justify-center" : "gap-3.5 px-3.5",
+                  // Voce attiva: velatura viola/blu del marchio e tacca verticale sul bordo della sidebar
+                  // (distanza dal bordo = padding orizzontale della sidebar, vedi app-sidebar.tsx).
                   isActive
-                    ? "bg-brand-soft font-semibold text-ink before:absolute before:-left-5 before:top-1/2 before:h-7 before:w-1 before:-translate-y-1/2 before:rounded-r-full before:bg-brand"
+                    ? cn(
+                        "bg-brand-soft font-semibold text-ink before:absolute before:top-1/2 before:h-7 before:w-1 before:-translate-y-1/2 before:rounded-r-full before:bg-brand",
+                        collapsed ? "before:-left-4" : "before:-left-5",
+                      )
                     : "font-medium text-ink-2 hover:bg-sunken hover:text-ink",
                 )}
               >
@@ -56,7 +62,8 @@ export function SidebarNav({ items, collapsed, counts, onNavigate }: SidebarNavP
                       {`: ${count} ${item.count.description}`}
                     </span>
                     {collapsed ? (
-                      <span aria-hidden="true" className="absolute right-2.5 top-2 size-1.5 rounded-full bg-brand" />
+                      // Sull'angolo in alto a destra dell'icona, con un bordo che la stacca dal disegno.
+                      <span aria-hidden="true" className="absolute right-2 top-2 size-2 rounded-full bg-brand ring-2 ring-white" />
                     ) : (
                       <span
                         aria-hidden="true"

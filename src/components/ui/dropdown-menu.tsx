@@ -9,18 +9,26 @@ export const DropdownMenuTrigger = RadixMenu.Trigger;
 
 export function DropdownMenuContent({
   align = "end",
+  side = "bottom",
   className,
+  onCloseAutoFocus,
   children,
 }: {
   align?: "start" | "center" | "end";
+  /** "top" per i menu aperti da elementi in fondo alla pagina (es. il composer di Coach AI). */
+  side?: "top" | "bottom";
   className?: string;
+  /** Per decidere dove va il focus alla chiusura (preventDefault lo lascia dov'è). */
+  onCloseAutoFocus?: (event: Event) => void;
   children: ReactNode;
 }) {
   return (
     <RadixMenu.Portal>
       <RadixMenu.Content
         align={align}
+        side={side}
         sideOffset={8}
+        onCloseAutoFocus={onCloseAutoFocus}
         className={cn(
           "z-50 min-w-52 rounded-lg border border-line bg-surface p-1.5 shadow-popover data-[state=open]:animate-pop-in",
           className,

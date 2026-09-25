@@ -27,7 +27,12 @@ function toContainsPattern(search: string): string {
 
 /** Il telefono non è nella vista delle clienti: si cercano prima gli id nella scheda (sempre sotto RLS). */
 async function findClientIdsByPhone(db: AppSupabaseClient, pattern: string): Promise<string[]> {
-  const { data, error } = await db.from("clients").select("id").ilike("phone", pattern).limit(MAX_CLIENTS);
+  const { data, error } = await db
+    .from("clients")
+    .select("id")
+    .ilike("phone", pattern)
+    .is("archived_at", null)
+    .limit(MAX_CLIENTS);
   if (error) {
     throw new DataAccessError("clients.findIdsByPhone", error);
   }
@@ -114,7 +119,8 @@ export async function isClientAssignedTo(db: AppSupabaseClient, coachId: string,
 }
 
 export async function clientExists(db: AppSupabaseClient, clientId: string): Promise<boolean> {
-  const { data, error } = await db.from("clients").select("id").eq("id", clientId).maybeSingle();
+  // Le clienti archiviate non sono operative: l'amministrazione le vede solo per ripristinarle.
+  const { data, error } = await db.from("clients").select("id").eq("id", clientId).is("archived_at", null).maybeSingle();
   if (error) {
     throw new DataAccessError("clients.exists", error);
   }
@@ -127,6 +133,7 @@ export async function listClientOptions(db: AppSupabaseClient): Promise<Array<{ 
     .from("clients")
     .select("id, full_name")
     .eq("approval_status", "approved")
+    .is("archived_at", null)
     .neq("status", "completed")
     .order("full_name")
     .limit(MAX_CLIENTS);
@@ -134,4 +141,34 @@ export async function listClientOptions(db: AppSupabaseClient): Promise<Array<{ 
     throw new DataAccessError("clients.listOptions", error);
   }
   return data.map((row) => ({ id: row.id, fullName: row.full_name }));
+}
+
+export type ArchivedClient = { id: string; fullName: string; archivedAt: string };
+
+/** Clienti archiviate che corrispondono alla ricerca (la RLS le mostra solo all'amministrazione). */
+export async function searchArchivedClients(db: AppSupabaseClient, search: string): Promise<ArchivedClient[]> {
+  const { data, error } = await db
+    .from("clients")
+    .select("id, full_name, archived_at")
+    .not("archived_at", "is", null)
+    .ilike("full_name", toContainsPattern(search))
+    .order("full_name")
+    .limit(20);
+  if (error) {
+    throw new DataAccessError("clients.searchArchived", error);
+  }
+  return data.flatMap((row) => (row.archived_at ? [{ id: row.id, fullName: row.full_name, archivedAt: row.archived_at }] : []));
+}
+
+export async function findArchivedClient(db: AppSupabaseClient, clientId: string): Promise<ArchivedClient | null> {
+  const { data, error } = await db
+    .from("clients")
+    .select("id, full_name, archived_at")
+    .eq("id", clientId)
+    .not("archived_at", "is", null)
+    .maybeSingle();
+  if (error) {
+    throw new DataAccessError("clients.findArchived", error);
+  }
+  return data?.archived_at ? { id: data.id, fullName: data.full_name, archivedAt: data.archived_at } : null;
 }

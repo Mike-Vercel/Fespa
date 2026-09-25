@@ -8,6 +8,7 @@ import type { CopilotAnswerOutput } from "@/server/ai/schemas/copilot";
 import type { OnboardingQuestionsOutput } from "@/server/ai/schemas/onboarding-questions";
 import type { ReplyDraftOutput } from "@/server/ai/schemas/reply-draft";
 import type { ToolPayload } from "@/server/ai/tools/types";
+import { AIProviderError } from "@/server/errors";
 import { excerpt, recurringTopics, sensitiveNoteFor, topicRulesMatching } from "./mock-heuristics";
 import type { AgentRequest, AIProvider, AIUsage, StructuredRequest } from "./types";
 
@@ -205,6 +206,10 @@ export function createMockProvider(): AIProvider {
           return { output: mockReplyDraft(request.context), usage: NO_USAGE };
         case "onboarding_questions":
           return { output: mockOnboardingQuestions(request.context), usage: NO_USAGE };
+        // La Prova FESPA è una conversazione reale con i visitatori: niente risposte simulate.
+        case "public_trial_reply":
+        case "public_trial_summary":
+          throw new AIProviderError("demo_unsupported");
       }
     },
 
@@ -217,6 +222,12 @@ export function createMockProvider(): AIProvider {
         if (!result.isError) payloads.push(result.payload);
       }
       return { output: composeCopilotAnswer(request.context, payloads), usage: NO_USAGE, steps: calls.length + 1 };
+    },
+
+    // Coach AI deve capire richieste libere e scegliere i tool: simularlo con regole fisse
+    // sarebbe un finto chatbot. In modalità dimostrativa l'agente lo dichiara e non risponde.
+    async streamAgent() {
+      throw new AIProviderError("demo_unsupported");
     },
   };
 }

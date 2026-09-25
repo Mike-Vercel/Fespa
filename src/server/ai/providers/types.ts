@@ -3,6 +3,7 @@ import type { z } from "zod";
 import type { CheckinAnalysisContext } from "@/server/ai/context/checkin-analysis";
 import type { CopilotContext } from "@/server/ai/context/copilot";
 import type { OnboardingQuestionsContext } from "@/server/ai/context/onboarding-questions";
+import type { PublicTrialContext } from "@/server/ai/context/public-trial";
 import type { ReplyDraftContext } from "@/server/ai/context/reply-draft";
 import type { ToolRunResult } from "@/server/ai/tools/types";
 
@@ -43,6 +44,7 @@ export type StructuredRequest = BaseRequest &
     | { purpose: "checkin_analysis"; context: CheckinAnalysisContext }
     | { purpose: "reply_draft"; context: ReplyDraftContext }
     | { purpose: "onboarding_questions"; context: OnboardingQuestionsContext }
+    | { purpose: "public_trial_reply" | "public_trial_summary"; context: PublicTrialContext }
   );
 
 export type ToolSpec = {
@@ -65,8 +67,54 @@ export type AgentRequest = BaseRequest & {
 export type StructuredResult = { output: unknown; usage: AIUsage };
 export type AgentResult = StructuredResult & { steps: number };
 
+// --- Agente conversazionale con streaming (Coach AI) ---------------------------------------
+
+/** Allegato binario passato al modello come contenuto (mai come istruzione). */
+export type AgentAttachmentPart =
+  | { type: "document"; mediaType: "application/pdf"; base64: string }
+  | { type: "image"; mediaType: "image/png" | "image/jpeg" | "image/webp"; base64: string };
+
+export type AgentUserPart = { type: "text"; text: string } | AgentAttachmentPart;
+
+/** Storico in forma neutra: il provider lo traduce nel formato della propria API. */
+export type AgentConversationMessage =
+  | { role: "user"; parts: AgentUserPart[] }
+  | { role: "assistant"; text: string };
+
+export type AgentToolCall = { id: string; name: string; input: unknown };
+
+export type AgentToolResult = {
+  /** Testo (di solito JSON) restituito al modello. */
+  content: string;
+  isError: boolean;
+  /** true: il turno finisce qui senza richiamare il modello (es. domanda di chiarimento mostrata alla coach). */
+  endTurn?: boolean;
+};
+
+export type AgentStreamRequest = {
+  purpose: "coach_agent";
+  system: string;
+  messages: AgentConversationMessage[];
+  tools: ToolSpec[];
+  /** Limite alle iterazioni del loop con i tool (costi, latenza, cicli). */
+  maxSteps: number;
+  maxOutputTokens: number;
+  /** Interrompe la generazione (pulsante "Stop" o chiusura della pagina). */
+  signal: AbortSignal;
+  onTextDelta: (delta: string) => void;
+  executeTool: (call: AgentToolCall) => Promise<AgentToolResult>;
+};
+
+export type AgentStreamResult = {
+  text: string;
+  usage: AIUsage;
+  steps: number;
+  finish: "completed" | "ended_by_tool";
+};
+
 export interface AIProvider {
   readonly info: AIProviderInfo;
   generateStructured(request: StructuredRequest): Promise<StructuredResult>;
   runAgent(request: AgentRequest): Promise<AgentResult>;
+  streamAgent(request: AgentStreamRequest): Promise<AgentStreamResult>;
 }

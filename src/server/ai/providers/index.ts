@@ -3,6 +3,7 @@ import { resolveAIConfig } from "@/server/ai/config";
 import { AIProviderError } from "@/server/errors";
 import { createAnthropicProvider } from "./anthropic";
 import { createMockProvider } from "./mock";
+import { createOpenAIProvider } from "./openai";
 import type { AIProvider } from "./types";
 
 // La configurazione arriva dall'env, letto una volta per processo: il provider si crea una volta sola.
@@ -18,6 +19,11 @@ export function getAIProvider(): AIProvider {
   if (config.kind === "none") {
     throw new AIProviderError("not_configured");
   }
-  cachedProvider ??= config.kind === "anthropic" ? createAnthropicProvider(config) : createMockProvider();
+  cachedProvider ??=
+    config.kind === "anthropic"
+      ? createAnthropicProvider(config)
+      : config.kind === "openai"
+        ? createOpenAIProvider(config)
+        : createMockProvider();
   return cachedProvider;
 }

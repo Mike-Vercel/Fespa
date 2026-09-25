@@ -310,166 +310,65 @@
   }
 
   .landing-header {
-    transition: background-color 220ms ease, box-shadow 220ms ease;
+    transition:
+      background-color 220ms ease,
+      box-shadow 220ms ease,
+      translate 380ms var(--ease-soft);
   }
 
-  .landing-intro {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    display: grid;
-    place-items: center;
+  /* Scorrendo verso il basso la barra sale (features/marketing/hide-on-scroll-header.tsx);
+   * con il focus da tastiera su un suo elemento resta visibile. */
+  .landing-header[data-hidden="true"]:not(:focus-within) {
+    translate: 0 -100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .landing-header {
+      transition: none;
+    }
+  }
+
+  /* Intro della home (features/marketing/landing-intro.tsx): pagina bianca, la parola FESPA della hero
+   * si crea lettera per lettera, poi entrano navbar e testi. Durante la costruzione niente scroll. */
+  html:has([data-intro="waiting"]),
+  html:has([data-intro="building"]) {
     overflow: hidden;
-    background: #0b0b0b;
-    color: #fff;
-    opacity: 1;
-    transition: opacity 650ms var(--ease-soft), visibility 650ms var(--ease-soft);
   }
 
-  .landing-intro--exit {
-    visibility: hidden;
+  [data-intro="waiting"] .hero-portal [data-gp-pin] {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  [data-intro] .landing-header {
     opacity: 0;
-    pointer-events: none;
+    transform: translateY(-100%);
   }
 
-  .landing-intro__line {
-    display: flex;
-    width: min(100% - 1rem, 1440px);
-    min-height: 100svh;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(1.35rem, 4vh, 3rem);
-    overflow: hidden;
-    background: #0b0b0b;
-  }
-
-  .landing-intro__wordmark {
-    position: relative;
-    top: -10vh;
-    flex: 0 0 auto;
-    color: #fff;
-    font-family: var(--font-schibsted), sans-serif;
-    font-size: clamp(2.8rem, 8vw, 7rem);
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    line-height: 0.9;
-    display: inline-flex;
-    gap: 0.02em;
-    /* La spaziatura aggiunge spazio anche dopo l'ultima lettera: lo si compensa per restare al centro. */
-    margin-right: -0.12em;
-  }
-
-  .landing-intro__letter {
-    display: inline-block;
-    will-change: opacity, transform, filter;
-    animation: landing-letter-form 720ms var(--ease-soft) var(--letter-delay) both;
-  }
-
-  .landing-intro__reel {
-    width: min(100%, 1180px);
-    min-width: 0;
-    justify-content: center;
-    will-change: opacity, transform, filter;
-    animation: landing-intro-appear 650ms var(--ease-soft) 760ms both;
-  }
-
-  /* Ogni frase centrata: la colonna è larga quanto la più lunga, le altre non devono restare a sinistra. */
-  .landing-intro__reel .username-reel__track > div {
-    text-align: center;
-    transition: color 500ms var(--ease-soft), opacity 500ms var(--ease-soft), text-shadow 500ms var(--ease-soft);
-  }
-
-  .landing-intro__reel .username-reel__content {
-    justify-content: center;
-  }
-
-  .landing-intro__reel .username-reel__viewport {
-    flex: 0 1 auto;
-    width: auto;
-    max-width: 100%;
-  }
-
-  .landing-intro__reel .username-reel__track {
-    width: max-content;
-    margin-inline: auto;
-  }
-
-  @keyframes landing-intro-appear {
-    from {
-      opacity: 0;
-      filter: blur(12px);
-      transform: translateY(16px) scale(0.88);
-    }
-    62% {
-      opacity: 1;
-      filter: blur(0);
-      transform: translateY(-2px) scale(1.015);
-    }
-    to {
-      opacity: 1;
-      filter: blur(0);
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  @keyframes landing-letter-form {
-    0% {
-      opacity: 0;
-      filter: blur(14px);
-      transform: translateY(24px) scale(0.7);
-    }
-    68% {
-      opacity: 1;
-      filter: blur(0);
-      transform: translateY(-4px) scale(1.06);
-    }
-    100% {
-      opacity: 1;
-      filter: blur(0);
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  @media (max-width: 640px) {
-    .landing-intro__reel {
-      width: 100%;
-    }
-
-    .landing-intro__line {
-      gap: 4.5rem;
-    }
-
-    .landing-intro__wordmark {
-      top: -8vh;
-    }
-
-    .landing-intro__reel .username-reel__content {
-      width: 100%;
-      font-size: clamp(0.72rem, 3.9vw, 1.25rem);
-      letter-spacing: -0.05em;
-    }
-
-    .landing-intro__reel .username-reel__viewport {
-      flex: 0 1 auto;
-      min-width: 0;
-      max-width: 100%;
-    }
-
-    .landing-intro__reel .username-reel__track {
-      max-width: 100%;
-    }
-  }
-
-  .landing-content {
+  [data-intro] .hero-portal [data-gp-front] > *,
+  [data-intro] .hero-portal [data-gp-caption] {
     opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 700ms var(--ease-soft), transform 700ms var(--ease-soft);
+    translate: 0 14px;
   }
 
-  .landing-content--ready {
+  [data-intro="revealing"] .landing-header {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
+    transition:
+      opacity 600ms var(--ease-soft),
+      transform 750ms var(--ease-soft);
+  }
+
+  [data-intro="revealing"] .hero-portal [data-gp-front] > *,
+  [data-intro="revealing"] .hero-portal [data-gp-caption] {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 700ms var(--ease-soft) 180ms,
+      translate 800ms var(--ease-soft) 180ms;
+  }
+
+  [data-intro="revealing"] .hero-portal [data-gp-front] > :last-child {
+    transition-delay: 300ms;
   }
 
   .landing-header:hover {
@@ -931,5 +830,1212 @@
   /* Il benvenuto a tutto schermo è solo movimento: non si mostra affatto. */
   .dashboard-welcome {
     display: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Coach AI: indicatore "sta scrivendo" e cursore della risposta in streaming.
+ * Con prefers-reduced-motion le animazioni vengono azzerate dalla regola globale.
+ * --------------------------------------------------------------------------- */
+.coach-ai-typing {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.coach-ai-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--color-brand-violet);
+  opacity: 0.35;
+  animation: coach-ai-dot 1.2s ease-in-out infinite;
+}
+
+.coach-ai-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.coach-ai-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes coach-ai-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+.coach-ai-caret {
+  display: inline-block;
+  width: 7px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  border-radius: 2px;
+  background-color: var(--color-brand-violet);
+  animation: coach-ai-caret 1s steps(2, start) infinite;
+}
+
+@keyframes coach-ai-caret {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Hero della home (Glyph Portal): didascalia in basso con il carattere e i colori del sito.
+ * Selettori con una classe: vincono sulle regole :where() del componente.
+ * --------------------------------------------------------------------------- */
+.hero-portal [data-gp-caption] {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero-portal [data-gp-hint] {
+  color: var(--color-ink-3);
+}
+
+.hero-portal [data-gp-enter] {
+  color: var(--color-brand);
+  gap: 10px;
+}
+
+.hero-portal [data-gp-hint],
+.hero-portal [data-gp-enter] {
+  white-space: nowrap;
+}
+
+/* Su telefono le due voci restano su una riga. */
+@media (max-width: 639px) {
+  .hero-portal [data-gp-caption] {
+    inset-inline: 6%;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Confronto PRIMA/DOPO (components/ui/before-after-slider.tsx).
+ * La posizione iniziale arriva dal CSS, per breakpoint; dopo un'interazione vale --ba-pos.
+ * Cambia solo il ritaglio della foto PRIMA: dimensioni e inquadratura restano identiche.
+ * --------------------------------------------------------------------------- */
+.before-after {
+  --ba-current: var(--ba-pos, var(--ba-initial, 50));
+}
+
+@media (min-width: 1024px) {
+  .before-after {
+    --ba-current: var(--ba-pos, var(--ba-initial-lg, 50));
+  }
+}
+
+.before-after__before {
+  clip-path: inset(0 calc(100% - var(--ba-current) * 1%) 0 0);
+}
+
+.before-after__line,
+.before-after__handle {
+  left: calc(var(--ba-current) * 1%);
+}
+
+.before-after__labels[data-dominant="after"] [data-ba-label="before"],
+.before-after__labels[data-dominant="before"] [data-ba-label="after"] {
+  opacity: 0;
+}
+
+/* -----------------------------------------------------------------------------
+ * Hero "Il tuo percorso comincia da te" (features/marketing/transformation-section.tsx)
+ * --------------------------------------------------------------------------- */
+
+/* Emerge dal bianco in cui sfuma il portale FESPA. */
+.transformation-section::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 5;
+  height: 18%;
+  background: linear-gradient(to bottom, #fff 0%, rgb(255 255 255 / 0.85) 35%, rgb(255 255 255 / 0) 100%);
+  pointer-events: none;
+}
+
+.transformation-accent {
+  background-image: linear-gradient(95deg, #2a6af6 0%, #4f55ea 32%, #7c4fe8 62%, #c457d2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Più largo del testo: dopo l'ingresso il gradiente scorre una volta (transformation-motion.tsx). */
+  background-size: 200% 100%;
+}
+
+/* "Inizia dalla consulenza gratuita": il gradiente FESPA riempie da sinistra, passa un riflesso di luce,
+ * il pulsante si solleva con un alone viola e la freccia viene sostituita da una nuova. */
+.cta-glow {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cta-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, #2a6af6 0%, #6a4ff0 48%, #c457d2 100%);
+  transform: translateX(-101%);
+  transition: transform 0.6s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.cta-glow::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: -45%;
+  z-index: -1;
+  width: 35%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.5), transparent);
+  transform: skewX(-20deg);
+  opacity: 0;
+}
+
+.cta-glow__arrow {
+  position: relative;
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+  overflow: hidden;
+}
+
+.cta-glow__arrow > svg {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.45s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.cta-glow__arrow > svg:last-child {
+  transform: translateX(-160%);
+}
+
+.cta-glow:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) {
+  .cta-glow:hover,
+  .cta-glow:focus-visible {
+    transform: translateY(-3px);
+    box-shadow:
+      0 22px 44px -18px rgb(106 79 240 / 0.8),
+      0 8px 18px -10px rgb(42 106 246 / 0.6);
+  }
+
+  .cta-glow:hover::before,
+  .cta-glow:focus-visible::before {
+    transform: none;
+  }
+
+  .cta-glow:hover::after,
+  .cta-glow:focus-visible::after {
+    animation: cta-shine 0.9s 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .cta-glow:hover .cta-glow__arrow > svg:first-child,
+  .cta-glow:focus-visible .cta-glow__arrow > svg:first-child {
+    transform: translateX(160%);
+  }
+
+  .cta-glow:hover .cta-glow__arrow > svg:last-child,
+  .cta-glow:focus-visible .cta-glow__arrow > svg:last-child {
+    transform: none;
+  }
+}
+
+@keyframes cta-shine {
+  0% {
+    left: -45%;
+    opacity: 1;
+  }
+  100% {
+    left: 125%;
+    opacity: 1;
+  }
+}
+
+/* "Scopri il metodo": sottolineatura a gradiente che scorre, freccia in un cerchio che si colora e ruota. */
+.discover-link {
+  background-image: linear-gradient(90deg, #4a5bf0, #8a55ea, #d27fd8, #8a55ea, #4a5bf0);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 200% 1.5px;
+  transition:
+    color 0.3s ease,
+    background-size 0.3s ease;
+}
+
+.discover-link__icon {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(31 29 26 / 0.18);
+  border-radius: 9999px;
+  transition:
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+@media (hover: hover) {
+  .discover-link:hover,
+  .discover-link:focus-visible {
+    color: var(--color-ink);
+    background-size: 200% 2px;
+    animation: discover-flow 1.8s linear infinite;
+  }
+
+  .discover-link:hover .discover-link__icon,
+  .discover-link:focus-visible .discover-link__icon {
+    border-color: transparent;
+    background: linear-gradient(135deg, #2a6af6, #7c4fe8 55%, #c457d2);
+    color: #fff;
+    transform: rotate(-45deg) scale(1.08);
+    box-shadow: 0 10px 22px -10px rgb(124 79 232 / 0.9);
+  }
+}
+
+@keyframes discover-flow {
+  to {
+    background-position: -200% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-glow:hover,
+  .cta-glow:focus-visible,
+  .discover-link:hover .discover-link__icon,
+  .discover-link:focus-visible .discover-link__icon {
+    transform: none;
+  }
+
+  .discover-link:hover,
+  .discover-link:focus-visible {
+    animation: none;
+  }
+}
+
+/* La foto si scioglie nel bianco: sopra e sotto a tutta larghezza su telefono, su tutti i lati altrove.
+ * Sotto la sfumatura è lunga: le gambe svaniscono invece di finire con un taglio netto. */
+.transformation-visual__images {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 72%, transparent 100%);
+}
+
+@media (min-width: 640px) {
+  .transformation-visual__images {
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 72%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 72%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    mask-composite: intersect;
+  }
+}
+
+/* Anche la linea del divisore svanisce come i bordi della foto. */
+.transformation-visual .before-after__line {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 72%, transparent 100%);
+}
+
+/* Coda del portale FESPA: dopo i tre principi il viola sfuma nel bianco della sezione successiva. */
+.hero-portal-outro {
+  height: 60svh;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0.55) 45%, #fff 88%);
+}
+
+/* Senza animazione il campo viola non è fisso dietro: la sfumatura parte dal viola stesso. */
+.hero-portal[data-gp-motion="off"] .hero-portal-outro {
+  background: linear-gradient(to bottom, #4a3fe0 0%, #b9b1f5 45%, #fff 88%);
+}
+
+/* -----------------------------------------------------------------------------
+ * "Non è una dieta" (features/marketing/method-section.tsx)
+ * --------------------------------------------------------------------------- */
+
+/* Home: serif editoriale EB Garamond (features/marketing/fonts.ts) al posto di Newsreader. */
+.landing-page {
+  --font-serif: var(--font-eb-garamond), ui-serif, Georgia, serif;
+}
+
+/* In prova: Luckiest Guy per i titoli grandi della home (h2/h3 in serif). Le maiuscole vengono
+ * portate all'altezza di quelle del Garamond, così dimensioni e a capo restano quelli pensati. */
+.landing-page :is(h2, h3).font-serif {
+  font-family: var(--font-luckiest-guy), ui-rounded, system-ui, sans-serif;
+  font-size-adjust: cap-height 0.62;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Testo con il gradiente FESPA (blu → viola → rosa), largo quanto il testo. Il padding tiene dentro
+ * il riquadro l'accento di "È" e la sporgenza del corsivo: fuori, background-clip: text non li colora. */
+.fespa-gradient-text {
+  width: fit-content;
+  margin-block: -0.14em;
+  padding-block: 0.14em;
+  padding-right: 0.08em;
+  background-image: linear-gradient(95deg, #2a4ff2 0%, #5a4ff0 38%, #8b4fe6 68%, #c452d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Lo sfondo emerge dal bianco in cui finisce il confronto PRIMA/DOPO. */
+.method-section::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -10;
+  height: clamp(7rem, 13vw, 15rem);
+  background: linear-gradient(to bottom, #fff 0%, rgb(255 255 255 / 0.75) 40%, rgb(255 255 255 / 0) 100%);
+  pointer-events: none;
+}
+
+/* Sotto i 1280px la sezione è lunga e stretta: le onde restano in fondo, lontane dal testo. */
+.method-section__bg {
+  height: clamp(26rem, 95vw, 48rem);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 40%);
+}
+
+@media (min-width: 1280px) {
+  .method-section__bg {
+    height: auto;
+    mask-image: none;
+  }
+}
+
+.method-card {
+  box-shadow:
+    0 1px 2px rgb(21 23 43 / 0.04),
+    0 32px 64px -34px rgb(64 48 140 / 0.24);
+}
+
+/* La foto non è un rettangolo: su mobile il bordo superiore è un'onda, da 768px il bordo sinistro
+ * è l'arco di un'ellisse che entra nella card. --open (0 → 1) la apre all'ingresso (method-motion.tsx). */
+.method-card__photo {
+  --open: 1;
+  clip-path: ellipse(calc(var(--open) * 150%) calc(var(--open) * 100%) at 62% 100%);
+}
+
+@media (min-width: 768px) {
+  .method-card__photo {
+    clip-path: ellipse(calc(var(--open) * 100%) 92% at 100% 50%);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * "Ne hanno parlato" (features/marketing/press-strip.tsx)
+ * --------------------------------------------------------------------------- */
+
+.press-marquee {
+  --press-gap: clamp(2.75rem, 6vw, 5.5rem);
+  --press-height: clamp(1.45rem, 2.1vw, 1.9rem);
+  overflow: hidden;
+  /* I loghi entrano ed escono sfumando ai bordi. */
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+}
+
+.press-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: press-marquee 42s linear infinite;
+}
+
+/* Mouse sopra: il nastro si ferma. Con la tastiera torna all'inizio, così il link a fuoco è visibile. */
+.press-marquee:hover .press-marquee__track {
+  animation-play-state: paused;
+}
+
+.press-marquee:focus-within .press-marquee__track {
+  animation: none;
+}
+
+@keyframes press-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.press-marquee__list {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--press-gap);
+  /* Il margine finale uguale allo spazio tra i loghi: le copie si susseguono a passo costante. */
+  padding-right: var(--press-gap);
+}
+
+.press-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-block: 0.5rem;
+  color: rgb(21 23 43 / 0.5);
+}
+
+.press-logo {
+  display: block;
+  height: calc(var(--press-height) * var(--logo-scale));
+  background: currentColor;
+  mask: var(--logo) center / contain no-repeat;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.3s ease;
+}
+
+/* Le testate con un articolo: freccia sempre visibile; al passaggio il logo prende il gradiente FESPA. */
+.press-item--link {
+  border-radius: 0.5rem;
+  color: rgb(21 23 43 / 0.62);
+}
+
+.press-item__arrow {
+  color: #6a4fe0;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.press-item--link:hover .press-logo,
+.press-item--link:focus-visible .press-logo {
+  background: linear-gradient(95deg, #2a4ff2 0%, #5a4ff0 38%, #8b4fe6 68%, #c452d4 100%);
+  transform: scale(1.06);
+}
+
+.press-item--link:hover .press-item__arrow,
+.press-item--link:focus-visible .press-item__arrow {
+  transform: translate(2px, -2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press-marquee {
+    mask-image: none;
+  }
+
+  .press-marquee__track {
+    width: auto;
+    justify-content: center;
+    animation: none;
+  }
+
+  .press-marquee__list {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1.5rem;
+    padding-inline: 1rem;
+  }
+
+  .press-marquee__list--copy {
+    display: none;
+  }
+
+  .press-logo,
+  .press-item__arrow {
+    transition: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * "Come funziona" (features/marketing/how-it-works-section.tsx)
+ * --------------------------------------------------------------------------- */
+
+.hiw-steps {
+  --node-size: 3.25rem;
+}
+
+@media (min-width: 1100px) {
+  .hiw-steps {
+    --node-size: clamp(3.75rem, 4.2vw, 4.75rem);
+  }
+}
+
+/* Sotto i 1100px: nastri solo agli angoli, sfumati verso il centro. */
+.hiw-bg-top {
+  mask-image: linear-gradient(to bottom, #000 45%, transparent);
+}
+
+.hiw-bg-bottom {
+  mask-image: linear-gradient(to top, #000 45%, transparent);
+}
+
+.hiw-node {
+  box-shadow:
+    0 0 0 5px rgb(255 255 255 / 0.55),
+    0 10px 26px -8px rgb(var(--glow) / 0.55),
+    0 0 22px rgb(var(--glow) / 0.2);
+  transition: box-shadow 0.35s ease;
+}
+
+/* Tratteggio dal fondo del nodo fin dentro l'immagine (i nodi stanno a --node-y dall'alto del passo). */
+.hiw-connector {
+  top: calc(var(--node-y) + var(--node-size) / 2 + 6px);
+  height: calc(100px - var(--node-y) - var(--node-size) / 2 + 6px);
+  border-left: 1.5px dashed rgb(var(--glow) / 0.5);
+}
+
+/* Le illustrazioni hanno il fondo bianco: moltiplicato sullo sfondo chiaro sparisce, senza riquadri.
+ * Il fondo non è bianco puro (leggermente rosato ai bordi): i bordi sfumano, così il riquadro non si intravede. */
+.hiw-visual {
+  mix-blend-mode: multiply;
+  transition: translate 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hiw-visual img {
+  mask-image:
+    linear-gradient(to right, transparent, #000 7%, #000 93%, transparent),
+    linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+  mask-composite: intersect;
+}
+
+.hiw-seg {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/* Sotto i 1100px: binario verticale dal nodo di un passo a quello del successivo (gap della lista: 3rem). */
+.hiw-rail {
+  top: calc(var(--node-size) + 0.5rem);
+  bottom: -2.5rem;
+  left: calc(var(--node-size) / 2 - 1px);
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, rgb(var(--glow)), rgb(var(--glow-next)));
+  opacity: 0.75;
+}
+
+/* Passo sotto il mouse: l'immagine sale di poco, il nodo si illumina, il suo tratto di linea si intensifica. */
+@media (hover: hover) and (min-width: 1100px) {
+  .hiw-step:hover .hiw-visual {
+    translate: 0 -5px;
+  }
+
+  .hiw-step:hover .hiw-node {
+    box-shadow:
+      0 0 0 5px rgb(255 255 255 / 0.7),
+      0 12px 30px -8px rgb(var(--glow) / 0.75),
+      0 0 34px rgb(var(--glow) / 0.4);
+  }
+
+  .hiw-steps:has(li:nth-child(1):hover) .hiw-seg-1,
+  .hiw-steps:has(li:nth-child(2):hover) .hiw-seg-2,
+  .hiw-steps:has(li:nth-child(3):hover) .hiw-seg-3,
+  .hiw-steps:has(li:nth-child(4):hover) .hiw-seg-4 {
+    opacity: 0.9;
+  }
+}
+
+/* "Inizia dal primo passo": pillola scura con un alone blu, viola e rosa appena accennato. */
+.hiw-cta {
+  box-shadow:
+    -16px 10px 30px -14px rgb(74 123 246 / 0.7),
+    16px 10px 30px -14px rgb(224 127 224 / 0.7),
+    0 14px 34px -16px rgb(124 92 242 / 0.85);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.hiw-cta__arrow {
+  transition: translate 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hiw-cta:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) {
+  .hiw-cta:hover,
+  .hiw-cta:focus-visible {
+    transform: translateY(-2px);
+    background-color: #1a1e3f;
+    box-shadow:
+      -18px 12px 34px -12px rgb(74 123 246 / 0.85),
+      18px 12px 34px -12px rgb(224 127 224 / 0.85),
+      0 16px 38px -14px rgb(124 92 242 / 0.95);
+  }
+
+  .hiw-cta:hover .hiw-cta__arrow,
+  .hiw-cta:focus-visible .hiw-cta__arrow {
+    translate: 3px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hiw-line {
+    clip-path: none !important;
+  }
+
+  .hiw-visual,
+  .hiw-cta,
+  .hiw-cta__arrow {
+    transition: none;
+  }
+
+  .hiw-step:hover .hiw-visual,
+  .hiw-cta:hover {
+    translate: none;
+    transform: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * "L'app del Metodo FESPA" (features/marketing/fespa-app-section.tsx)
+ * --------------------------------------------------------------------------- */
+
+/* Nero antracite con bagliori appena accennati attorno al telefono (niente effetto "gaming"). */
+.fespa-app {
+  background-image:
+    radial-gradient(38% 46% at 24% 42%, rgb(84 78 240 / 0.16), transparent 72%),
+    radial-gradient(26% 34% at 12% 78%, rgb(196 82 212 / 0.08), transparent 70%),
+    radial-gradient(30% 40% at 88% 22%, rgb(122 108 242 / 0.07), transparent 70%);
+}
+
+/* Il fondo dell'immagine del telefono non è uniforme: i quattro lati sfumano, niente rettangolo visibile.
+ * Il telefono occupa il centro dell'immagine (circa 23–84% in larghezza, 18–81% in altezza) e resta intatto. */
+.app-phone img {
+  mask-image:
+    linear-gradient(to right, transparent, #000 13%, #000 87%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-composite: intersect;
+}
+
+.app-features {
+  --ring-size: 3.5rem;
+  --feature-gap: 1.75rem;
+}
+
+@media (min-width: 1100px) {
+  .app-features {
+    --ring-size: clamp(3.5rem, 4vw, 4.4rem);
+    --feature-gap: 1.6vw;
+  }
+}
+
+.app-feature__ring {
+  background: radial-gradient(circle, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0) 70%);
+  box-shadow:
+    inset 0 0 0 1.5px var(--ring),
+    0 0 26px -8px var(--ring);
+}
+
+/* Puntini verticali dal cerchio di una funzione a quello della successiva. */
+.app-feature__dots {
+  position: absolute;
+  top: calc(var(--ring-size) + 0.35rem);
+  bottom: calc(-1 * var(--feature-gap) + 0.35rem);
+  left: calc(var(--ring-size) / 2 - 1px);
+  border-left: 2px dotted var(--ring);
+  opacity: 0.7;
+}
+
+/* -----------------------------------------------------------------------------
+ * "Prova FESPA" (features/public-trial)
+ * --------------------------------------------------------------------------- */
+
+.trial-ribbons {
+  opacity: 0.8;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+}
+
+.trial-chat {
+  box-shadow:
+    0 1px 2px rgb(21 23 43 / 0.04),
+    0 34px 70px -40px rgb(64 48 140 / 0.38);
+}
+
+.trial-log {
+  max-height: min(60svh, 30rem);
+  overscroll-behavior: contain;
+}
+
+.trial-send-gradient {
+  background: linear-gradient(135deg, #6d7cf6 0%, #7c5cf2 50%, #b25fe0 100%);
+  box-shadow: 0 10px 22px -12px rgb(124 92 242 / 0.9);
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  .trial-send-gradient:not(:disabled):hover {
+    filter: brightness(1.08);
+  }
+}
+
+.trial-send-gradient:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+.trial-typing span {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: #7c5cf2;
+  animation: trial-typing 1.2s ease-in-out infinite;
+}
+
+.trial-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.trial-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes trial-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trial-typing span {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * "Chi ti segue" (features/marketing/team-section.tsx)
+ * --------------------------------------------------------------------------- */
+
+/* Serif editoriale della home (EB Garamond) anche dove il carattere display di prova non va usato. */
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+/* Le card si moltiplicano sullo sfondo: nella loro fascia i nastri non devono esserci, altrimenti traspaiono. */
+.team-ribbons {
+  opacity: 0.55;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 28%, transparent 42%, transparent 86%, #000 100%);
+}
+
+/* Mobile: carosello con scorrimento a scatto (la card successiva si intravede). */
+.team-grid {
+  display: flex;
+  gap: 1rem;
+  margin-inline: -1rem;
+  padding: 2.5rem 1rem 1.5rem;
+  overflow-x: auto;
+  scroll-padding-inline: 1rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.team-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.team-grid > li {
+  flex: 0 0 min(80%, 22rem);
+  scroll-snap-align: start;
+}
+
+@media (min-width: 640px) {
+  .team-grid {
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
+    scroll-padding-inline: 1.5rem;
+  }
+}
+
+/* Tablet: griglia 2×2 con fotografie grandi. */
+@media (min-width: 768px) {
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3.5rem 1.5rem;
+    margin-inline: 0;
+    padding: 1.5rem 0 0;
+    overflow: visible;
+  }
+
+  .team-grid > li {
+    flex: none;
+  }
+}
+
+/* Desktop: tutte le persone nella stessa fila. */
+@media (min-width: 1200px) {
+  .team-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2vw;
+    padding-top: 1vw;
+  }
+}
+
+/* La card intera si moltiplica sullo sfondo: il bianco della foto sopra la card sparisce (la testa
+ * "esce" senza ritagli) e resta corretto anche durante ingresso e hover. */
+.team-card {
+  container-type: inline-size;
+  mix-blend-mode: multiply;
+  transition: translate 0.38s var(--ease-soft);
+}
+
+.team-card__frame {
+  top: 8cqw;
+  border: 1px solid rgb(21 23 43 / 0.07);
+  border-radius: 1.6rem;
+  background: linear-gradient(to bottom, #fbf9ff, #ffffff 45%);
+  box-shadow:
+    0 1px 2px rgb(21 23 43 / 0.04),
+    0 26px 50px -34px rgb(64 48 140 / 0.35);
+  transition: box-shadow 0.38s var(--ease-soft);
+}
+
+/* La fondatrice: bordo a gradiente FESPA appena accennato e glow più intenso. */
+.team-card--featured .team-card__frame {
+  border-color: transparent;
+  background:
+    linear-gradient(to bottom, #faf7ff, #ffffff 45%) padding-box,
+    linear-gradient(135deg, #9aa8f8, #bf95f0 50%, #f1acd9) border-box;
+}
+
+.team-card__glow {
+  top: 12cqw;
+  left: 9%;
+  right: 9%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 50% 42%, rgb(185 150 245 / 0.36), rgb(242 184 226 / 0.2) 48%, transparent 70%);
+  opacity: 0.9;
+  transition: opacity 0.38s ease;
+}
+
+.team-card--featured .team-card__glow {
+  background: radial-gradient(circle at 50% 42%, rgb(140 150 245 / 0.46), rgb(242 170 222 / 0.3) 50%, transparent 70%);
+}
+
+.team-card__spark {
+  top: 12cqw;
+  right: 6%;
+  opacity: 0.85;
+}
+
+/* L'ingrandimento dell'hover resta dentro il riquadro della foto (la testa è già al suo interno). */
+.team-card__photo {
+  aspect-ratio: 1312 / 1000;
+  overflow: hidden;
+  mix-blend-mode: multiply;
+}
+
+.team-card__photo img {
+  transform-origin: 50% 100%;
+  transition: scale 0.5s var(--ease-soft);
+}
+
+.team-card__info {
+  box-shadow: 0 12px 26px -20px rgb(64 48 140 / 0.5);
+}
+
+@media (hover: hover) {
+  .team-card:hover {
+    translate: 0 -5px;
+  }
+
+  .team-card:hover .team-card__photo img {
+    scale: 1.03;
+  }
+
+  .team-card:hover .team-card__frame {
+    box-shadow:
+      0 1px 2px rgb(21 23 43 / 0.05),
+      0 34px 60px -30px rgb(64 48 140 / 0.45);
+  }
+
+  .team-card:hover .team-card__glow {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-card,
+  .team-card__photo img {
+    transition: none;
+  }
+
+  .team-card:hover {
+    translate: none;
+  }
+
+  .team-card:hover .team-card__photo img {
+    scale: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Testimonianze (features/marketing/testimonials-section.tsx)
+ * --------------------------------------------------------------------------- */
+
+/* Dal bianco in cui finisce "Chi ti segue" riemergono gli stessi nastri. */
+.testimonials-ribbons {
+  opacity: 0.6;
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 18%, #000 55%);
+}
+
+/* Mobile: una riga sola che scorre a destra e sinistra, card centrate a scatto (le vicine si intravedono). */
+@media (width < 700px) {
+  .testimonials-grid {
+    display: flex;
+    align-items: stretch;
+    gap: 0.875rem;
+    margin-inline: -1rem;
+    padding: 0.5rem 7.5vw 1.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 7.5vw;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .testimonials-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testimonials-grid > li {
+    flex: 0 0 85vw;
+    margin-bottom: 0;
+    scroll-snap-align: center;
+  }
+
+  .testimonials-grid .testimonial-card {
+    height: 100%;
+  }
+}
+
+@media (min-width: 700px) {
+  .testimonials-grid {
+    columns: 2;
+    column-gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .testimonials-grid {
+    columns: 3;
+    column-gap: 1.4vw;
+  }
+}
+
+.testimonial-card {
+  box-shadow:
+    0 1px 2px rgb(21 23 43 / 0.04),
+    0 24px 48px -34px rgb(64 48 140 / 0.35);
+}
+
+.testimonials-all {
+  box-shadow: 0 14px 30px -16px rgb(88 70 220 / 0.7);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s ease;
+}
+
+@media (hover: hover) {
+  .testimonials-all:hover,
+  .testimonials-all:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px -14px rgb(88 70 220 / 0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-all {
+    transition: none;
+  }
+
+  .testimonials-all:hover {
+    transform: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Domande frequenti (features/marketing/faq-section.tsx, faq-accordion.tsx)
+ * --------------------------------------------------------------------------- */
+
+/* Sotto i 1024px: angoli dello sfondo sfumati verso il centro (vedi faq-section.tsx). */
+.faq-bg-top {
+  mask-image: linear-gradient(to bottom, #000 35%, transparent);
+}
+
+.faq-bg-bottom {
+  mask-image: linear-gradient(to top, #000 35%, transparent);
+}
+
+.faq-accent {
+  width: fit-content;
+  margin-block: -0.14em;
+  padding-block: 0.14em;
+  padding-right: 0.08em;
+  background-image: linear-gradient(95deg, #9d8af6 0%, #b99af2 45%, #f09ad2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.faq-item {
+  position: relative;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0.8rem;
+  background: rgb(12 12 17 / 0.55);
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Aperta: bordo lilla, leggero bagliore e una piccola tacca a gradiente sul lato sinistro. */
+.faq-item[data-open="true"] {
+  border-color: rgb(169 150 246 / 0.5);
+  background: rgb(26 22 42 / 0.6);
+  box-shadow: 0 18px 44px -26px rgb(139 92 246 / 0.75);
+}
+
+.faq-item::before {
+  content: "";
+  position: absolute;
+  top: 1.1rem;
+  bottom: 1.1rem;
+  left: -1px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, #6d8cf6, #a78bfa 50%, #f09ad2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.faq-item[data-open="true"]::before {
+  opacity: 1;
+}
+
+.faq-trigger {
+  color: rgb(247 244 238 / 0.9);
+  border-radius: inherit;
+  transition: color 0.2s ease;
+}
+
+.faq-trigger:focus-visible {
+  outline: 2px solid #a99af6;
+  outline-offset: 3px;
+}
+
+.faq-item[data-open="true"] .faq-trigger {
+  color: #ffffff;
+}
+
+@media (hover: hover) {
+  .faq-item:hover {
+    border-color: rgb(255 255 255 / 0.26);
+  }
+
+  .faq-item[data-open="true"]:hover {
+    border-color: rgb(169 150 246 / 0.65);
+  }
+
+  .faq-trigger:hover {
+    color: #ffffff;
+  }
+}
+
+/* "+" che diventa "−": la barretta verticale ruota e si sovrappone a quella orizzontale. */
+.faq-icon {
+  position: relative;
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  color: #c7b8fb;
+}
+
+.faq-icon::before,
+.faq-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.75px;
+  margin-top: -0.875px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.3s var(--ease-soft);
+}
+
+.faq-icon::after {
+  transform: rotate(90deg);
+}
+
+.faq-item[data-open="true"] .faq-icon::after {
+  transform: rotate(180deg);
+}
+
+/* Risposta: l'altezza cresce da 0 al contenuto (grid 0fr → 1fr) con una leggera dissolvenza.
+ * Chiusa è anche invisibile agli screen reader (visibility), dopo la fine della chiusura. */
+.faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.3s var(--ease-soft),
+    opacity 0.22s ease,
+    visibility 0s linear 0.3s;
+}
+
+.faq-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.3s var(--ease-soft),
+    opacity 0.3s ease 0.05s,
+    visibility 0s;
+}
+
+.faq-panel > div {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-item,
+  .faq-item::before,
+  .faq-trigger,
+  .faq-icon::before,
+  .faq-icon::after,
+  .faq-panel,
+  .faq-panel[data-open="true"] {
+    transition: none;
   }
 }

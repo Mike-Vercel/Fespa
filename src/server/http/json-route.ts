@@ -8,13 +8,13 @@ import { fieldErrorsOf } from "@/validation/field-errors";
 
 /** Le richieste AI sono piccole (ID e una domanda): un body più grande è un abuso o un errore. */
 const MAX_BODY_BYTES = 16 * 1024;
-const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+export const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
 
 /**
  * Le chiamate dal browser arrivano con Origin uguale all'host dell'app.
  * Un POST cross-site (CSRF) viene rifiutato prima di fare qualsiasi lavoro.
  */
-function assertSameOrigin(request: Request): void {
+export function assertSameOrigin(request: Request): void {
   const origin = request.headers.get("origin");
   const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
   if (!origin || !host || new URL(origin).host !== host) {
@@ -22,7 +22,7 @@ function assertSameOrigin(request: Request): void {
   }
 }
 
-async function readJsonBody(request: Request): Promise<unknown> {
+export async function readJsonBody(request: Request): Promise<unknown> {
   if (!request.headers.get("content-type")?.includes("application/json")) {
     throw new ValidationError({}, "Formato della richiesta non supportato.");
   }
@@ -41,7 +41,7 @@ async function readJsonBody(request: Request): Promise<unknown> {
   }
 }
 
-function errorResponse(operation: string, error: unknown): Response {
+export function errorResponse(operation: string, error: unknown): Response {
   const status = httpStatusOf(error);
   if (error instanceof AppError && status < 500) {
     logger.warn("api.rejected", { operation, code: error.code, status });

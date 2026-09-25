@@ -20,8 +20,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactCompiler: true,
   poweredByHeader: false,
-  // 75 è il predefinito; 100 serve al logo (piccolo, deve restare nitido).
-  images: { qualities: [75, 100] },
+  // 75 è il predefinito; 90 per le illustrazioni della home (testi piccoli); 100 per il logo (piccolo, deve restare nitido).
+  images: { qualities: [75, 90, 100] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

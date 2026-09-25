@@ -367,3 +367,46 @@ export function UsersSkeleton() {
     </LoadingRegion>
   );
 }
+
+/** Coach AI: intestazione, colonna delle chat (da xl) e conversazione con il composer in basso. */
+export function CoachAISkeleton() {
+  return (
+    <LoadingRegion label="Caricamento di Coach AI" className="flex flex-col">
+      <div className="hidden flex-col gap-3 lg:mb-7 lg:flex">
+        <Skeleton className="h-12 w-64 sm:h-14" />
+        <Skeleton className="h-4 w-full max-w-xl" />
+        <Skeleton className="h-4 w-full max-w-md" />
+      </div>
+      <div className="-mx-4 -mb-20 -mt-6 grid h-[calc(100dvh-72px)] grid-cols-1 overflow-hidden bg-white/95 sm:-mx-6 lg:mx-0 lg:-mb-14 lg:mt-0 lg:h-[calc(100dvh-19rem)] lg:rounded-2xl lg:border lg:border-line/80 xl:grid-cols-[clamp(18.5rem,24vw,22.5rem)_minmax(0,1fr)]">
+        <div className="hidden flex-col gap-3 border-r border-line/80 p-3.5 xl:flex">
+          <Skeleton className="h-11 w-full rounded-xl" />
+          <Skeleton className="h-10 w-full rounded-full" />
+          {Array.from({ length: 6 }, (_, index) => (
+            <div key={index} className="flex gap-3 px-2 py-2">
+              <Skeleton className="size-5 shrink-0 rounded-full" />
+              <div className="flex flex-1 flex-col gap-2">
+                <Skeleton className="h-3.5 w-3/4" />
+                <Skeleton className="h-3 w-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex min-h-0 flex-col">
+          <div className="flex items-center gap-3 border-b border-line/80 px-4 py-4 lg:px-6">
+            <div className="flex flex-1 flex-col gap-2">
+              <Skeleton className="h-5 w-56 max-w-full" />
+              <Skeleton className="h-3 w-40" />
+            </div>
+          </div>
+          <div className="flex flex-1 flex-col gap-6 px-4 py-6 lg:px-8">
+            <Skeleton className="ml-auto h-16 w-3/5 rounded-2xl" />
+            <Skeleton className="h-40 w-4/5 rounded-2xl" />
+          </div>
+          <div className="px-3 pb-4 lg:px-6 lg:pb-5">
+            <Skeleton className="h-28 w-full rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    </LoadingRegion>
+  );
+}

@@ -89,3 +89,11 @@ export async function deleteNote(db: AppSupabaseClient, noteId: string): Promise
   }
   return data.length > 0;
 }
+
+export async function findNote(db: AppSupabaseClient, noteId: string, currentCoachId: string): Promise<NoteItem | null> {
+  const { data, error } = await db.from("coach_notes").select(NOTE_COLUMNS).eq("id", noteId).maybeSingle();
+  if (error) {
+    throw new DataAccessError("notes.find", error);
+  }
+  return data ? toNoteItem(data, currentCoachId) : null;
+}

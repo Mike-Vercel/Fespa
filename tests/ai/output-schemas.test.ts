@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toStrictJsonSchema } from "@/server/ai/providers/anthropic";
+import { toStrictJsonSchema } from "@/server/ai/providers/json-schema";
 import { checkinAnalysisSchema } from "@/server/ai/schemas/checkin-analysis";
 import { copilotAnswerSchema } from "@/server/ai/schemas/copilot";
 import { parseAIOutput } from "@/server/ai/schemas/parse-output";

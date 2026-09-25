@@ -58,6 +58,8 @@ export type Database = {
           notes_for_coach: string | null;
           privacy_consent_at: string | null;
           onboarding_completed_at: string | null;
+          archived_at: string | null;
+          archived_by: string | null;
         };
         Insert: {
           id?: string;
@@ -80,6 +82,8 @@ export type Database = {
           notes_for_coach?: string | null;
           privacy_consent_at?: string | null;
           onboarding_completed_at?: string | null;
+          archived_at?: string | null;
+          archived_by?: string | null;
         };
         Update: {
           id?: string;
@@ -102,6 +106,8 @@ export type Database = {
           notes_for_coach?: string | null;
           privacy_consent_at?: string | null;
           onboarding_completed_at?: string | null;
+          archived_at?: string | null;
+          archived_by?: string | null;
         };
         Relationships: [];
       };
@@ -484,6 +490,486 @@ export type Database = {
           },
         ];
       };
+      ai_conversations: {
+        Row: {
+          id: string;
+          owner_id: string;
+          title: string;
+          title_is_custom: boolean;
+          preview: string | null;
+          archived_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          title?: string;
+          title_is_custom?: boolean;
+          preview?: string | null;
+          archived_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          title?: string;
+          title_is_custom?: boolean;
+          preview?: string | null;
+          archived_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversations_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_messages: {
+        Row: {
+          id: string;
+          conversation_id: string;
+          owner_id: string;
+          role: Database["public"]["Enums"]["ai_message_role"];
+          content: string;
+          status: Database["public"]["Enums"]["ai_message_status"];
+          metadata: Json;
+          client_message_id: string | null;
+          provider: string | null;
+          model: string | null;
+          prompt_version: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          conversation_id: string;
+          owner_id: string;
+          role: Database["public"]["Enums"]["ai_message_role"];
+          content?: string;
+          status?: Database["public"]["Enums"]["ai_message_status"];
+          metadata?: Json;
+          client_message_id?: string | null;
+          provider?: string | null;
+          model?: string | null;
+          prompt_version?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          conversation_id?: string;
+          owner_id?: string;
+          role?: Database["public"]["Enums"]["ai_message_role"];
+          content?: string;
+          status?: Database["public"]["Enums"]["ai_message_status"];
+          metadata?: Json;
+          client_message_id?: string | null;
+          provider?: string | null;
+          model?: string | null;
+          prompt_version?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_messages_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_attachments: {
+        Row: {
+          id: string;
+          owner_id: string;
+          conversation_id: string | null;
+          message_id: string | null;
+          file_name: string;
+          mime_type: string;
+          size_bytes: number;
+          storage_path: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          conversation_id?: string | null;
+          message_id?: string | null;
+          file_name: string;
+          mime_type: string;
+          size_bytes: number;
+          storage_path: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          conversation_id?: string | null;
+          message_id?: string | null;
+          file_name?: string;
+          mime_type?: string;
+          size_bytes?: number;
+          storage_path?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_attachments_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_attachments_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_attachments_message_id_fkey";
+            columns: ["message_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_messages";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_automations: {
+        Row: {
+          id: string;
+          owner_id: string;
+          trigger: Database["public"]["Enums"]["ai_automation_trigger"];
+          action: Database["public"]["Enums"]["ai_automation_action"];
+          enabled: boolean;
+          config: Json;
+          auto_execute: boolean;
+          send_message: boolean;
+          requires_confirmation: boolean;
+          last_run_at: string | null;
+          last_status: Database["public"]["Enums"]["ai_automation_run_status"] | null;
+          last_error: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          trigger: Database["public"]["Enums"]["ai_automation_trigger"];
+          action: Database["public"]["Enums"]["ai_automation_action"];
+          enabled?: boolean;
+          config?: Json;
+          auto_execute?: boolean;
+          send_message?: boolean;
+          requires_confirmation?: boolean;
+          last_run_at?: string | null;
+          last_status?: Database["public"]["Enums"]["ai_automation_run_status"] | null;
+          last_error?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          trigger?: Database["public"]["Enums"]["ai_automation_trigger"];
+          action?: Database["public"]["Enums"]["ai_automation_action"];
+          enabled?: boolean;
+          config?: Json;
+          auto_execute?: boolean;
+          send_message?: boolean;
+          requires_confirmation?: boolean;
+          last_run_at?: string | null;
+          last_status?: Database["public"]["Enums"]["ai_automation_run_status"] | null;
+          last_error?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_automations_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_action_requests: {
+        Row: {
+          id: string;
+          owner_id: string;
+          conversation_id: string | null;
+          message_id: string | null;
+          automation_id: string | null;
+          tool_name: string;
+          risk_level: Database["public"]["Enums"]["ai_risk_level"];
+          status: Database["public"]["Enums"]["ai_action_status"];
+          input: Json;
+          preview: Json;
+          target_type: string | null;
+          target_id: string | null;
+          idempotency_key: string;
+          result: Json | null;
+          error_code: string | null;
+          error_message: string | null;
+          expires_at: string | null;
+          confirmed_at: string | null;
+          executed_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          conversation_id?: string | null;
+          message_id?: string | null;
+          automation_id?: string | null;
+          tool_name: string;
+          risk_level: Database["public"]["Enums"]["ai_risk_level"];
+          status: Database["public"]["Enums"]["ai_action_status"];
+          input: Json;
+          preview: Json;
+          target_type?: string | null;
+          target_id?: string | null;
+          idempotency_key: string;
+          result?: Json | null;
+          error_code?: string | null;
+          error_message?: string | null;
+          expires_at?: string | null;
+          confirmed_at?: string | null;
+          executed_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          conversation_id?: string | null;
+          message_id?: string | null;
+          automation_id?: string | null;
+          tool_name?: string;
+          risk_level?: Database["public"]["Enums"]["ai_risk_level"];
+          status?: Database["public"]["Enums"]["ai_action_status"];
+          input?: Json;
+          preview?: Json;
+          target_type?: string | null;
+          target_id?: string | null;
+          idempotency_key?: string;
+          result?: Json | null;
+          error_code?: string | null;
+          error_message?: string | null;
+          expires_at?: string | null;
+          confirmed_at?: string | null;
+          executed_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_action_requests_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_action_requests_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_action_requests_message_id_fkey";
+            columns: ["message_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_messages";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_action_requests_automation_id_fkey";
+            columns: ["automation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_automations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_action_logs: {
+        Row: {
+          id: string;
+          actor_id: string | null;
+          conversation_id: string | null;
+          action_request_id: string | null;
+          automation_id: string | null;
+          tool_name: string;
+          risk_level: Database["public"]["Enums"]["ai_risk_level"];
+          event: string;
+          target_type: string | null;
+          target_id: string | null;
+          input_summary: Json;
+          error_code: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          actor_id?: string | null;
+          conversation_id?: string | null;
+          action_request_id?: string | null;
+          automation_id?: string | null;
+          tool_name: string;
+          risk_level: Database["public"]["Enums"]["ai_risk_level"];
+          event: string;
+          target_type?: string | null;
+          target_id?: string | null;
+          input_summary?: Json;
+          error_code?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          actor_id?: string | null;
+          conversation_id?: string | null;
+          action_request_id?: string | null;
+          automation_id?: string | null;
+          tool_name?: string;
+          risk_level?: Database["public"]["Enums"]["ai_risk_level"];
+          event?: string;
+          target_type?: string | null;
+          target_id?: string | null;
+          input_summary?: Json;
+          error_code?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_action_logs_actor_id_fkey";
+            columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_action_logs_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_conversations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_action_logs_action_request_id_fkey";
+            columns: ["action_request_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_action_requests";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_action_logs_automation_id_fkey";
+            columns: ["automation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_automations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_automation_events: {
+        Row: {
+          id: string;
+          automation_id: string;
+          owner_id: string;
+          trigger: Database["public"]["Enums"]["ai_automation_trigger"];
+          client_id: string | null;
+          checkin_id: string | null;
+          status: Database["public"]["Enums"]["ai_automation_event_status"];
+          attempts: number;
+          action_request_id: string | null;
+          error_code: string | null;
+          created_at: string;
+          processed_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          automation_id: string;
+          owner_id: string;
+          trigger: Database["public"]["Enums"]["ai_automation_trigger"];
+          client_id?: string | null;
+          checkin_id?: string | null;
+          status?: Database["public"]["Enums"]["ai_automation_event_status"];
+          attempts?: number;
+          action_request_id?: string | null;
+          error_code?: string | null;
+          created_at?: string;
+          processed_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          automation_id?: string;
+          owner_id?: string;
+          trigger?: Database["public"]["Enums"]["ai_automation_trigger"];
+          client_id?: string | null;
+          checkin_id?: string | null;
+          status?: Database["public"]["Enums"]["ai_automation_event_status"];
+          attempts?: number;
+          action_request_id?: string | null;
+          error_code?: string | null;
+          created_at?: string;
+          processed_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_automation_events_automation_id_fkey";
+            columns: ["automation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_automations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_automation_events_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_automation_events_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_automation_events_checkin_id_fkey";
+            columns: ["checkin_id"];
+            isOneToOne: false;
+            referencedRelation: "checkins";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_automation_events_action_request_id_fkey";
+            columns: ["action_request_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_action_requests";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       client_overview: {
@@ -553,8 +1039,62 @@ export type Database = {
         };
         Returns: undefined;
       };
+      archive_client: {
+        Args: { p_client_id: string };
+        Returns: undefined;
+      };
+      restore_client: {
+        Args: { p_client_id: string };
+        Returns: undefined;
+      };
+      trial_get: {
+        Args: { p_token_hash: string };
+        Returns: Json;
+      };
+      trial_start: {
+        Args: { p_token_hash: string };
+        Returns: Json;
+      };
+      trial_add_user_message: {
+        Args: { p_token_hash: string; p_client_message_id: string; p_content: string };
+        Returns: Json;
+      };
+      trial_claim_generation: {
+        Args: { p_token_hash: string };
+        Returns: Json;
+      };
+      trial_release_generation: {
+        Args: { p_token_hash: string };
+        Returns: Json;
+      };
+      trial_add_assistant_message: {
+        Args: { p_token_hash: string; p_content: string };
+        Returns: Json;
+      };
+      trial_save_lead: {
+        Args: { p_token_hash: string; p_name: string; p_email: string; p_privacy_consent: boolean };
+        Returns: Json;
+      };
+      trial_complete: {
+        Args: { p_token_hash: string; p_summary: Json };
+        Returns: Json;
+      };
+      trial_begin_email: {
+        Args: { p_token_hash: string };
+        Returns: Json;
+      };
+      trial_finish_email: {
+        Args: { p_token_hash: string; p_sent: boolean };
+        Returns: Json;
+      };
+      trial_rate_limit: {
+        Args: { p_bucket: string; p_window_seconds: number; p_max_events: number };
+        Returns: boolean;
+      };
     };
     Enums: {
+      trial_message_role: "user" | "assistant";
+      trial_email_status: "not_requested" | "sending" | "sent" | "failed";
       app_role: "client" | "coach" | "admin" | "super_admin";
       client_approval_status: "pending" | "approved" | "rejected";
       experience_level: "beginner" | "intermediate" | "advanced";
@@ -564,8 +1104,16 @@ export type Database = {
       followup_source: "manual" | "ai_suggestion";
       ai_confidence: "low" | "medium" | "high";
       ai_followup_decision: "pending" | "accepted" | "dismissed";
-      ai_request_type: "checkin_analysis" | "copilot_question" | "reply_draft" | "onboarding_questions";
+      ai_request_type: "checkin_analysis" | "copilot_question" | "reply_draft" | "onboarding_questions" | "coach_agent";
       ai_interaction_status: "started" | "succeeded" | "failed" | "rate_limited";
+      ai_message_role: "user" | "assistant";
+      ai_message_status: "streaming" | "complete" | "stopped" | "failed";
+      ai_risk_level: "read" | "draft" | "write" | "high_risk" | "destructive";
+      ai_action_status: "draft" | "pending" | "executing" | "succeeded" | "failed" | "cancelled" | "expired";
+      ai_automation_trigger: "new_checkin" | "followup_due" | "followup_overdue" | "new_registration" | "new_message";
+      ai_automation_action: "generate_reply_draft";
+      ai_automation_run_status: "success" | "failed" | "partial";
+      ai_automation_event_status: "pending" | "processing" | "done" | "failed" | "skipped";
     };
     CompositeTypes: {
       [_ in never]: never;

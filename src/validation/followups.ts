@@ -7,20 +7,26 @@ export const FOLLOWUP_DESCRIPTION_MAX_LENGTH = 2000;
 /** Un follow-up si pianifica al massimo un anno avanti. */
 export const FOLLOWUP_MAX_DAYS_AHEAD = 365;
 
+const followupTitle = z
+  .string({ error: "Inserisci un titolo." })
+  .trim()
+  .min(3, { error: "Il titolo deve avere almeno 3 caratteri." })
+  .max(FOLLOWUP_TITLE_MAX_LENGTH, { error: `Massimo ${FOLLOWUP_TITLE_MAX_LENGTH} caratteri.` });
+
+const followupDescription = z
+  .string()
+  .trim()
+  .max(FOLLOWUP_DESCRIPTION_MAX_LENGTH, { error: `Massimo ${FOLLOWUP_DESCRIPTION_MAX_LENGTH} caratteri.` })
+  .optional()
+  .transform((value) => (value ? value : null));
+
+const followupDueOn = z.iso.date({ error: "Inserisci una data valida." });
+
 export const createFollowupSchema = z.object({
   clientId: uuidSchema,
-  title: z
-    .string({ error: "Inserisci un titolo." })
-    .trim()
-    .min(3, { error: "Il titolo deve avere almeno 3 caratteri." })
-    .max(FOLLOWUP_TITLE_MAX_LENGTH, { error: `Massimo ${FOLLOWUP_TITLE_MAX_LENGTH} caratteri.` }),
-  description: z
-    .string()
-    .trim()
-    .max(FOLLOWUP_DESCRIPTION_MAX_LENGTH, { error: `Massimo ${FOLLOWUP_DESCRIPTION_MAX_LENGTH} caratteri.` })
-    .optional()
-    .transform((value) => (value ? value : null)),
-  dueOn: z.iso.date({ error: "Inserisci una data valida." }),
+  title: followupTitle,
+  description: followupDescription,
+  dueOn: followupDueOn,
   // Presente solo quando il follow-up nasce da una proposta AI confermata dalla coach.
   aiAnalysisId: z
     .union([uuidSchema, z.literal("")])
@@ -29,6 +35,15 @@ export const createFollowupSchema = z.object({
 });
 
 export type CreateFollowupInput = z.infer<typeof createFollowupSchema>;
+
+export const updateFollowupSchema = z.object({
+  followupId: uuidSchema,
+  title: followupTitle,
+  description: followupDescription,
+  dueOn: followupDueOn,
+});
+
+export type UpdateFollowupInput = z.infer<typeof updateFollowupSchema>;
 
 export const followupStatusChangeSchema = z.object({
   followupId: uuidSchema,

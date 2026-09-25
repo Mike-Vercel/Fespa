@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1671 941" preserveAspectRatio="xMidYMid slice">
+  <!-- Sfondo della sezione "Come funziona": ricostruzione vettoriale di sfondo.png, nitida a ogni risoluzione. -->
+  <defs>
+    <radialGradient id="tl-glow" cx="120" cy="120" r="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d4cff9" stop-opacity=".8" />
+      <stop offset=".55" stop-color="#e6e0fb" stop-opacity=".35" />
+      <stop offset="1" stop-color="#efeafc" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="br-glow" cx="1500" cy="700" r="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f1cdef" stop-opacity=".75" />
+      <stop offset=".6" stop-color="#f4def3" stop-opacity=".3" />
+      <stop offset="1" stop-color="#f6e6f4" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="r-haze" cx="1590" cy="420" r="260" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e3e1fb" stop-opacity=".6" />
+      <stop offset="1" stop-color="#e3e1fb" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="bl-haze" cx="380" cy="880" r="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f3dcf1" stop-opacity=".55" />
+      <stop offset="1" stop-color="#f3dcf1" stop-opacity="0" />
+    </radialGradient>
+
+    <linearGradient id="tl-a" x1="0" y1="330" x2="640" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d9cff7" stop-opacity=".95" />
+      <stop offset=".6" stop-color="#e2dafa" stop-opacity=".8" />
+      <stop offset="1" stop-color="#ece7fc" stop-opacity=".2" />
+    </linearGradient>
+    <linearGradient id="tl-b" x1="0" y1="250" x2="420" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c9b1f4" stop-opacity=".95" />
+      <stop offset=".5" stop-color="#c8c4f7" stop-opacity=".85" />
+      <stop offset="1" stop-color="#d7dafa" stop-opacity=".6" />
+    </linearGradient>
+    <linearGradient id="tl-c" x1="0" y1="140" x2="300" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f1c9ef" stop-opacity=".9" />
+      <stop offset="1" stop-color="#e9d7f8" stop-opacity=".2" />
+    </linearGradient>
+    <linearGradient id="br-a" x1="760" y1="900" x2="1671" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e8e0fa" stop-opacity="0" />
+      <stop offset=".4" stop-color="#dcd4f8" stop-opacity=".85" />
+      <stop offset="1" stop-color="#cfc8f7" stop-opacity=".95" />
+    </linearGradient>
+    <linearGradient id="br-b" x1="1150" y1="900" x2="1671" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ecc9f0" stop-opacity=".2" />
+      <stop offset=".55" stop-color="#dcb0f2" stop-opacity=".85" />
+      <stop offset="1" stop-color="#c9a4f3" />
+    </linearGradient>
+    <linearGradient id="br-c" x1="1000" y1="941" x2="1671" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d7d2f8" stop-opacity=".1" />
+      <stop offset=".5" stop-color="#c6c6f6" stop-opacity=".9" />
+      <stop offset="1" stop-color="#bdb8f4" />
+    </linearGradient>
+    <linearGradient id="bl-a" x1="0" y1="730" x2="820" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d9d0f7" stop-opacity=".9" />
+      <stop offset=".6" stop-color="#e7dff9" stop-opacity=".7" />
+      <stop offset="1" stop-color="#f2e9f8" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="bottom" x1="0" y1="0" x2="1671" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e9def8" stop-opacity=".8" />
+      <stop offset=".4" stop-color="#f3e5f5" stop-opacity=".6" />
+      <stop offset=".7" stop-color="#e7dcf8" stop-opacity=".6" />
+      <stop offset="1" stop-color="#d9d3f7" stop-opacity=".9" />
+    </linearGradient>
+
+    <!-- Riflessi: compaiono e svaniscono lungo la curva. -->
+    <linearGradient id="l-tl" x1="0" y1="330" x2="640" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity=".9" /><stop offset=".7" stop-color="#fff" stop-opacity=".7" /><stop offset="1" stop-color="#fff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="l-br" x1="760" y1="900" x2="1671" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0" /><stop offset=".35" stop-color="#fff" stop-opacity=".9" /><stop offset="1" stop-color="#fff" stop-opacity=".85" />
+    </linearGradient>
+    <linearGradient id="l-bl" x1="0" y1="0" x2="820" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity=".8" /><stop offset=".7" stop-color="#fff" stop-opacity=".6" /><stop offset="1" stop-color="#fff" stop-opacity="0" />
+    </linearGradient>
+
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3" /></filter>
+    <filter id="haze" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="20" /></filter>
+    <filter id="shine" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="halo" />
+      <feMerge><feMergeNode in="halo" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1671" height="941" fill="#fdfbfa" />
+  <rect width="1671" height="941" fill="url(#r-haze)" />
+  <rect width="1671" height="941" fill="url(#bl-haze)" />
+
+  <!-- In alto a sinistra: fasce lavanda, viola e rosa che salgono verso il bordo superiore. -->
+  <rect width="1671" height="941" fill="url(#tl-glow)" />
+  <path d="M0 338 C160 225 400 95 640 0 L0 0 Z" fill="url(#tl-a)" filter="url(#soft)" />
+  <path d="M0 262 C120 170 270 70 420 0 L180 0 C120 40 60 90 0 150 Z" fill="url(#tl-b)" filter="url(#soft)" />
+  <path d="M0 160 C90 110 190 70 300 40 C200 55 90 80 0 100 Z" fill="url(#tl-c)" filter="url(#soft)" />
+  <path d="M40 330 C230 220 430 110 610 0 L640 0 C440 110 250 225 70 335 Z" fill="#fff" opacity=".35" filter="url(#soft)" />
+
+  <!-- In basso a destra: fasce che salgono verso il bordo destro, con un alone rosa. -->
+  <rect width="1671" height="941" fill="url(#br-glow)" />
+  <path d="M760 900 C1060 790 1380 700 1671 520 L1671 700 C1440 800 1180 850 900 920 Z" fill="url(#br-a)" filter="url(#soft)" />
+  <path d="M1180 900 C1360 820 1520 720 1671 600 L1671 830 C1530 870 1380 900 1260 941 L1160 941 Z" fill="url(#br-b)" filter="url(#soft)" />
+  <path d="M1000 941 C1250 880 1470 820 1671 760 L1671 941 Z" fill="url(#br-c)" filter="url(#soft)" />
+
+  <!-- In basso a sinistra: un'onda lavanda sottile e una fascia chiara lungo il bordo inferiore. -->
+  <path d="M0 728 C110 800 300 850 520 860 C640 866 740 872 820 882 L820 941 L0 941 Z" fill="url(#bl-a)" filter="url(#soft)" />
+  <rect x="0" y="860" width="1671" height="81" fill="url(#bottom)" filter="url(#haze)" />
+
+  <g fill="none" stroke-linecap="round" filter="url(#shine)">
+    <path d="M0 338 C160 225 400 95 640 0" stroke="url(#l-tl)" stroke-width="2" />
+    <path d="M0 262 C120 170 270 70 420 0" stroke="url(#l-tl)" stroke-width="1.6" />
+    <path d="M60 330 C240 215 440 105 620 0" stroke="url(#l-tl)" stroke-width="1.2" opacity=".7" />
+    <path d="M760 900 C1060 790 1380 700 1671 520" stroke="url(#l-br)" stroke-width="2" />
+    <path d="M1180 900 C1360 820 1520 720 1671 600" stroke="url(#l-br)" stroke-width="1.8" />
+    <path d="M900 920 C1180 850 1440 800 1671 700" stroke="url(#l-br)" stroke-width="1.5" opacity=".8" />
+    <path d="M1000 941 C1250 880 1470 820 1671 760" stroke="url(#l-br)" stroke-width="1.5" opacity=".75" />
+    <path d="M0 728 C110 800 300 850 520 860 C640 866 740 872 820 882" stroke="url(#l-bl)" stroke-width="1.6" />
+  </g>
+</svg>

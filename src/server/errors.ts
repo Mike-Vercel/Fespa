@@ -80,7 +80,8 @@ export type AIFailureReason =
   | "provider_rejected"
   | "timeout"
   | "invalid_output"
-  | "refused";
+  | "refused"
+  | "demo_unsupported";
 
 const AI_FAILURES: Record<AIFailureReason, { code: ErrorCode; httpStatus: number; userMessage: string }> = {
   not_configured: {
@@ -114,6 +115,13 @@ const AI_FAILURES: Record<AIFailureReason, { code: ErrorCode; httpStatus: number
     code: "AI_REFUSED",
     httpStatus: 422,
     userMessage: "L'AI non ha potuto elaborare questa richiesta.",
+  },
+  // Coach AI è un agente reale: il provider dimostrativo non lo simula.
+  demo_unsupported: {
+    code: "AI_DEMO_UNSUPPORTED",
+    httpStatus: 503,
+    userMessage:
+      "Coach AI richiede un provider AI reale: in modalità dimostrativa l'agente non è attivo. Configura AI_PROVIDER, AI_API_KEY e DEMO_AI_MODE=false.",
   },
 };
 

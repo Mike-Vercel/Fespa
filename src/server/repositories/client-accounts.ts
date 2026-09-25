@@ -29,6 +29,8 @@ const RPC_ERRORS: Record<string, () => Error> = {
   FC005: () => new ValidationError({ coachId: ["Seleziona una coach valida."] }),
   FC006: () => new NotFoundError("L'elemento richiesto non esiste più."),
   FC007: () => new ValidationError({}, "Non puoi modificare il tuo ruolo: chiedilo a un altro super admin."),
+  FC008: () => new ValidationError({}, "Questa cliente è già archiviata."),
+  FC009: () => new ValidationError({}, "Questa cliente non è archiviata."),
   // Violazione di unicità: l'email identifica una sola cliente.
   "23505": () => new ValidationError({ email: ["Esiste già una cliente con questa email."] }),
 };
@@ -327,4 +329,20 @@ export async function listClientCoachIds(db: AppSupabaseClient, clientId: string
     throw new DataAccessError("clientAccounts.listClientCoachIds", error);
   }
   return data.map((row) => row.coach_id);
+}
+
+// --- Archiviazione delle clienti (soft-delete, solo amministrazione) ---------------------
+
+export async function archiveClient(db: AppSupabaseClient, clientId: string): Promise<void> {
+  const { error } = await db.rpc("archive_client", { p_client_id: clientId });
+  if (error) {
+    throw toAppError("clientAccounts.archiveClient", error);
+  }
+}
+
+export async function restoreClient(db: AppSupabaseClient, clientId: string): Promise<void> {
+  const { error } = await db.rpc("restore_client", { p_client_id: clientId });
+  if (error) {
+    throw toAppError("clientAccounts.restoreClient", error);
+  }
 }

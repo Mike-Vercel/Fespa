@@ -15,6 +15,7 @@ export type ErrorCode =
   | "AI_TIMEOUT"
   | "AI_INVALID_OUTPUT"
   | "AI_REFUSED"
+  | "AI_DEMO_UNSUPPORTED"
   | "INTERNAL_ERROR"
   /** Solo lato client: la richiesta non ha raggiunto il server. */
   | "NETWORK_ERROR";

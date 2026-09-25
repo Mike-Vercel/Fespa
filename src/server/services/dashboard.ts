@@ -16,6 +16,9 @@ import { firstNameOf, greetingForHour } from "@/domain/greeting";
 import { isAdminRole } from "@/domain/roles";
 import type { AuthenticatedContext } from "@/server/auth/session";
 import { getServerEnv } from "@/server/env";
+import { logger } from "@/server/logger";
+import { countAutomationDrafts } from "@/server/repositories/ai-action-requests";
+import { countPendingAutomationEvents } from "@/server/repositories/ai-automations";
 import { countPendingReview, listCheckinTimesSince, listRecentCheckins } from "@/server/repositories/checkins";
 import { countPendingRegistrations } from "@/server/repositories/client-accounts";
 import { listClientOverviews } from "@/server/repositories/clients";
@@ -137,15 +140,34 @@ export type NavigationCounts = {
   dueFollowups: number;
   /** Solo per l'admin; 0 per le coach. */
   pendingRegistrations: number;
+  /** Bozze preparate dalle automazioni di Coach AI, da revisionare. */
+  coachAiDrafts: number;
+  /** Eventi delle automazioni ancora da elaborare (le bozze si preparano all'apertura dell'app). */
+  pendingAutomationEvents: number;
 };
+
+/**
+ * I contatori di Coach AI non devono mai bloccare la navigazione: se falliscono
+ * (es. migration non ancora applicata) valgono 0 e l'errore finisce nei log.
+ */
+async function optionalCount(name: string, count: Promise<number>): Promise<number> {
+  try {
+    return await count;
+  } catch (error) {
+    logger.warn("navigation.optional_count_failed", { name, error });
+    return 0;
+  }
+}
 
 /** Contatori della sidebar (una sola volta per richiesta, anche se usati in più punti). */
 export const getNavigationCounts = cache(async (context: AuthenticatedContext): Promise<NavigationCounts> => {
   const today = calendarDateIn(getServerEnv().APP_TIMEZONE);
-  const [pendingCheckins, dueFollowups, pendingRegistrations] = await Promise.all([
+  const [pendingCheckins, dueFollowups, pendingRegistrations, coachAiDrafts, pendingAutomationEvents] = await Promise.all([
     countPendingReview(context.db),
     countDueFollowups(context.db, today),
     isAdminRole(context.coach.role) ? countPendingRegistrations(context.db) : 0,
+    optionalCount("coachAiDrafts", countAutomationDrafts(context.db)),
+    optionalCount("pendingAutomationEvents", countPendingAutomationEvents(context.db)),
   ]);
-  return { pendingCheckins, dueFollowups, pendingRegistrations };
+  return { pendingCheckins, dueFollowups, pendingRegistrations, coachAiDrafts, pendingAutomationEvents };
 });

@@ -2,6 +2,7 @@ import {
   CalendarCheck2,
   Inbox,
   LayoutGrid,
+  MessageCircle,
   Settings,
   ShieldUser,
   UserCheck,
@@ -10,7 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-export type NavigationCountKey = "pendingCheckins" | "dueFollowups" | "pendingRegistrations";
+export type NavigationCountKey = "pendingCheckins" | "dueFollowups" | "pendingRegistrations" | "coachAiDrafts";
 
 export type NavigationItem = {
   href: string;
@@ -50,8 +51,16 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
   { href: "/admin/users", label: "Utenti registrati", icon: ShieldUser },
 ];
 
+/** L'agente dello staff: ultima voce del menu principale, come nel design di riferimento. */
+export const COACH_AI_NAVIGATION: NavigationItem = {
+  href: "/coach-ai",
+  label: "Coach AI",
+  icon: MessageCircle,
+  count: { key: "coachAiDrafts", description: "bozze pronte da revisionare" },
+};
+
 export function primaryNavigationFor(showAdmin: boolean): NavigationItem[] {
-  return showAdmin ? [...PRIMARY_NAVIGATION, ...ADMIN_NAVIGATION] : PRIMARY_NAVIGATION;
+  return [...PRIMARY_NAVIGATION, ...(showAdmin ? ADMIN_NAVIGATION : []), COACH_AI_NAVIGATION];
 }
 
 export const SECONDARY_NAVIGATION: NavigationItem[] = [

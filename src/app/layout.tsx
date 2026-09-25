@@ -29,6 +29,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#f7f5f0",
+  // Con la tastiera aperta (Android) il layout si restringe: il composer di Coach AI resta visibile.
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

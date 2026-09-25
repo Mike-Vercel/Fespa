@@ -20,19 +20,58 @@ export const LANDING_SECTIONS = [
 
 /** Numeri dichiarati dal sito ufficiale. */
 export const PROOF_STATS = [
-  { value: "3.407+", label: "donne in forma" },
-  { value: "2.140+", label: "recensioni" },
-  { value: "50+", label: "collaboratori al tuo fianco" },
+  { kind: "clients", value: "3.407+", label: "donne in forma" },
+  { kind: "reviews", value: "2.140+", label: "recensioni" },
+  { kind: "team", value: "50+", label: "collaboratori al tuo fianco" },
 ] as const;
 
-/** Testate citate dal sito ufficiale nella sezione "Ne hanno parlato". */
-export const PRESS_MENTIONS = ["La Stampa", "la Repubblica", "ANSA", "Il Messaggero", "Corriere dello Sport", "Donna Moderna"] as const;
+type PressMention = {
+  name: string;
+  /** Logo bianco su trasparente (dal sito ufficiale), usato come maschera: il colore lo decide la pagina. */
+  logo: string;
+  width: number;
+  height: number;
+  /** Articolo sul Metodo FESPA, solo se verificato. Senza articolo il logo non è un link. */
+  article?: { url: string; title: string };
+};
+
+/**
+ * Testate della sezione "Ne hanno parlato" del sito ufficiale, con i loghi che usa lì.
+ * Il sito ufficiale non collega gli articoli: quelli di Donna Moderna e la Repubblica (contenuto sponsorizzato)
+ * sono stati verificati, parlano del Metodo FESPA; per le altre testate va aggiunto il link quando lo fornisce FESPA.
+ */
+export const PRESS_MENTIONS: ReadonlyArray<PressMention> = [
+  { name: "La Stampa", logo: "/images/homepage/testate/la-stampa.webp", width: 402, height: 52 },
+  {
+    name: "la Repubblica",
+    logo: "/images/homepage/testate/la-repubblica.webp",
+    width: 397,
+    height: 85,
+    article: {
+      url: "https://milano.repubblica.it/native/2024/08/08/news/dimagrire_e_anche_una_questione_di_testa-423436101/",
+      title: "Dimagrire è anche una questione «di testa»",
+    },
+  },
+  { name: "ANSA", logo: "/images/homepage/testate/ansa.webp", width: 343, height: 74 },
+  { name: "Il Messaggero", logo: "/images/homepage/testate/il-messaggero.webp", width: 390, height: 71 },
+  { name: "Corriere dello Sport", logo: "/images/homepage/testate/corriere-dello-sport.webp", width: 407, height: 75 },
+  {
+    name: "Donna Moderna",
+    logo: "/images/homepage/testate/donna-moderna.webp",
+    width: 312,
+    height: 115,
+    article: {
+      url: "https://www.donnamoderna.com/benessere/alimentazione/basta-avere-metodo-e-dimagrire-in-modo-sano-naturale-e-duraturo-si-puo",
+      title: "Il metodo alimentare per dimagrire in modo sano e duraturo",
+    },
+  },
+];
 
 export const WITHOUT_LIST = [
-  "Senza diete restrittive",
-  "Senza eliminare i carboidrati",
-  "Senza preparare pasti diversi per la famiglia",
-  "Senza ore di palestra",
+  { title: "Senza diete restrittive", description: "Impari a mangiare in modo equilibrato, senza sensi di colpa." },
+  { title: "Senza eliminare i carboidrati", description: "Un'alimentazione varia e flessibile, adatta alla tua quotidianità." },
+  { title: "Senza preparare pasti diversi per la famiglia", description: "Soluzioni pratiche per tutta la famiglia." },
+  { title: "Senza ore di palestra", description: "Risultati concreti anche con poco tempo, nel rispetto della tua vita." },
 ] as const;
 
 /** I tre principi del metodo, dalla pagina "Chi siamo". */
@@ -51,59 +90,71 @@ export const METHOD_PILLARS = [
   },
 ] as const;
 
-/** Il percorso, come funziona davvero in questa app: registrazione → consulenza → attivazione → check-in. */
+/**
+ * Il percorso, come funziona davvero in questa app: registrazione → consulenza → attivazione → check-in.
+ * visual: illustrazione della sezione "Come funziona" (public/images/homepage/section_2, WebP dai PNG originali).
+ */
 export const JOURNEY_STEPS = [
   {
     title: "Registrati gratis",
     description:
       "Crea il tuo account e raccontaci di te: obiettivo, abitudini, giorni disponibili ed eventuali infortuni. Bastano tre minuti.",
+    visual: { src: "/images/homepage/section_2/card_1.webp", width: 1312, height: 1199 },
   },
   {
     title: "Consulenza gratuita",
     description:
       "Ti contattiamo per capire insieme il percorso più adatto a te. Il costo dipende dalle tue esigenze: prima ne parliamo, poi decidi tu.",
+    visual: { src: "/images/homepage/section_2/card_2.webp", width: 1536, height: 1024 },
   },
   {
     title: "La tua coach",
     description: "Scelto il percorso, attiviamo la tua area personale e ti affianchiamo una coach dedicata.",
+    visual: { src: "/images/homepage/section_2/card_3.webp", width: 1536, height: 1024 },
   },
   {
     title: "Check-in ogni settimana",
     description:
       "Racconti la tua settimana in due minuti. La tua coach legge, ti risponde e adatta il percorso insieme a te.",
+    visual: { src: "/images/homepage/section_2/card_4.webp", width: 1536, height: 1024 },
   },
 ] as const;
 
+/** Le quattro funzioni dell'area clienti, come le racconta la sezione "L'app del Metodo FESPA". */
 export const APP_FEATURES = [
   {
     icon: "checkin",
-    title: "Check-in settimanale in due minuti",
+    title: "Check-in in 2 minuti",
     description: "Energia, sonno, stress, alimentazione e allenamenti: pochi tocchi, anche dal telefono.",
   },
   {
     icon: "reply",
-    title: "Le risposte della tua coach in un solo posto",
-    description: "Niente messaggi persi tra le chat: ogni risposta resta nel tuo storico, da rileggere quando vuoi.",
+    title: "La coach ti risponde",
+    description: "Niente messaggi persi: trovi tutte le risposte in un solo posto.",
   },
   {
-    icon: "history",
-    title: "Il tuo percorso, settimana dopo settimana",
-    description: "Rivedi i check-in passati e guarda quanta strada hai fatto.",
+    icon: "progress",
+    title: "Guarda i tuoi progressi",
+    description: "Settimana dopo settimana, tutto resta ordinato nel tuo percorso.",
   },
   {
     icon: "privacy",
     title: "I tuoi dati, protetti",
-    description: "Le informazioni su infortuni e salute le condividi solo se vuoi: le vede solo chi ti segue.",
+    description: "Le informazioni che condividi sono gestite secondo le regole di accesso e privacy previste dall'app.",
   },
 ] as const;
 
 export type AppFeatureIcon = (typeof APP_FEATURES)[number]["icon"];
 
+/**
+ * Il team (dal sito ufficiale) con le fotografie di public/images/homepage/section_4 (WebP dai PNG originali).
+ * photoY: posizione verticale della foto nella card, per allineare le teste tra loro.
+ */
 export const TEAM = [
-  { name: "Federica Saccone", title: "Dott.ssa", role: "Ideatrice del Metodo FESPA" },
-  { name: "Giulia Lombardi", title: null, role: "Coach" },
-  { name: "Maria Diella", title: null, role: "Coach" },
-  { name: "Paola Paffile", title: null, role: "Coach" },
+  { name: "Federica Saccone", title: "Dott.ssa", role: "Ideatrice del Metodo FESPA", photo: "/images/homepage/section_4/federica.webp", photoY: "18%" },
+  { name: "Giulia Lombardi", title: null, role: "Coach", photo: "/images/homepage/section_4/giulia.webp", photoY: "0%" },
+  { name: "Maria Diella", title: null, role: "Coach", photo: "/images/homepage/section_4/maria.webp", photoY: "0%" },
+  { name: "Paola Paffile", title: null, role: "Coach", photo: "/images/homepage/section_4/paola.webp", photoY: "42%" },
 ] as const;
 
 /** Testimonianze pubblicate sul sito ufficiale (testo e firma come nell'originale). */

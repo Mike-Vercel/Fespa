@@ -2,15 +2,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { buttonClasses } from "@/components/ui/button";
 import { LANDING_SECTIONS, LOGIN_PATH, SIGNUP_PATH } from "./content";
+import { HideOnScrollHeader } from "./hide-on-scroll-header";
 import { Container } from "./primitives";
 
-/** Barra superiore fissa: la CTA di registrazione resta sempre a portata di mano. */
+/** Barra superiore: sparisce scorrendo verso il basso e torna scorrendo verso l'alto (hide-on-scroll-header.tsx). */
 export function LandingHeader() {
   return (
-    <header className="landing-header sticky top-0 z-30 border-b border-line/70 bg-white">
-      <Container className="flex h-16 items-center justify-between gap-3">
+    <HideOnScrollHeader className="landing-header sticky top-0 z-30 border-b border-line/70 bg-white">
+      {/* Stesso margine della hero "Il tuo percorso": logo e titolo sulla stessa verticale. */}
+      <Container className="flex h-16 max-w-none items-center justify-between gap-3 lg:px-[5vw]">
         <Link href="/" className="flex min-w-0 items-center rounded-md py-1" aria-label="FESPA Coach AI, torna all'inizio">
-          <Image src="/images/brand/logo-homepage.webp" alt="FESPA Coach AI" width={92} height={46} className="h-11 w-[88px] object-contain" priority />
+          <Image src="/images/brand/logo-sidebar.webp" alt="FESPA" width={48} height={48} quality={100} className="size-12 object-contain mix-blend-multiply" priority />
         </Link>
 
         <nav aria-label="Sezioni della pagina" className="hidden lg:block">
@@ -37,6 +39,6 @@ export function LandingHeader() {
           </Link>
         </div>
       </Container>
-    </header>
+    </HideOnScrollHeader>
   );
 }

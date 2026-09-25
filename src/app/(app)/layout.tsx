@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/shell/app-sidebar";
 import { SIDEBAR_COOKIE } from "@/components/shell/navigation";
 import { Topbar } from "@/components/shell/topbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AutomationRunner } from "@/features/coach-ai/components/automation-runner";
 import { calendarDateIn } from "@/domain/dates";
 import { isAdminRole } from "@/domain/roles";
 import { getAIStatus } from "@/server/ai/config";
@@ -28,6 +29,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       >
         Vai al contenuto
       </a>
+
+      <AutomationRunner pending={counts.pendingAutomationEvents} />
 
       <div className="flex min-h-dvh">
         <AppSidebar collapsedPreference={sidebarCollapsed} counts={counts} showAdmin={isAdminRole(context.coach.role)} />
